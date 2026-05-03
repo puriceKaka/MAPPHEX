@@ -4,12 +4,16 @@
   const API_TIMEOUT_MS = 6500;
   const FLUSH_DEBOUNCE_MS = 120;
   const FLUSH_RETRY_MS = 1200;
+  const IDB_NAME = "jixels_erp_indexeddb_v1";
+  const IDB_STORE = "kv";
 
   const mem = new Map();
   const pending = new Map();
   const subscribers = new Set();
 
   let apiState = "unknown"; // "unknown" | "ok" | "down"
+  let idbState = "unknown"; // "unknown" | "ok" | "down"
+  let idbPromise = null;
   let flushTimer = null;
   let retryTimer = null;
   let flushInFlight = false;
@@ -62,6 +66,79 @@
     }
   };
 
+  const openIdb = () => {
+    if (!("indexedDB" in window)) {
+      idbState = "down";
+      return Promise.resolve(null);
+    }
+    if (idbPromise) return idbPromise;
+    idbPromise = new Promise((resolve) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = () => {
+        idbState = "ok";
+        resolve(req.result);
+      };
+      req.onerror = () => {
+        idbState = "down";
+        resolve(null);
+      };
+      req.onblocked = () => {
+        idbState = "down";
+        resolve(null);
+      };
+    });
+    return idbPromise;
+  };
+
+  const idbGetMany = async (keys) => {
+    const db = await openIdb();
+    const want = uniqueStrings(keys);
+    const items = {};
+    if (!db || want.length === 0) return items;
+
+    await Promise.all(
+      want.map(
+        (key) =>
+          new Promise((resolve) => {
+            try {
+              const tx = db.transaction(IDB_STORE, "readonly");
+              const store = tx.objectStore(IDB_STORE);
+              const req = store.get(key);
+              req.onsuccess = () => {
+                if (typeof req.result !== "undefined") items[key] = req.result;
+                resolve();
+              };
+              req.onerror = () => resolve();
+            } catch {
+              resolve();
+            }
+          }),
+      ),
+    );
+    return items;
+  };
+
+  const idbSetMany = async (items) => {
+    const db = await openIdb();
+    if (!db || !items || typeof items !== "object") return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(IDB_STORE, "readwrite");
+        const store = tx.objectStore(IDB_STORE);
+        for (const [key, value] of Object.entries(items)) store.put(value ?? null, key);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+        tx.onabort = () => resolve(false);
+      } catch {
+        resolve(false);
+      }
+    });
+  };
+
   const setMem = (key, value) => {
     mem.set(key, value);
     emit({ type: "set", key, value });
@@ -69,8 +146,17 @@
 
   const tryHydrate = async (keys) => {
     const want = uniqueStrings(keys);
-    const missing = want.filter((k) => !mem.has(k));
+    let missing = want.filter((k) => !mem.has(k));
     if (missing.length === 0) return { ok: true, source: "cache", apiState };
+
+    const localItems = await idbGetMany(missing);
+    for (const [k, v] of Object.entries(localItems)) {
+      if (v === null || typeof v === "undefined") continue;
+      setMem(k, v);
+    }
+
+    missing = want.filter((k) => !mem.has(k));
+    if (missing.length === 0) return { ok: true, source: "indexeddb", apiState, idbState };
 
     try {
       const qs = encodeURIComponent(missing.join(","));
@@ -85,10 +171,11 @@
         if (v === null || typeof v === "undefined") continue;
         setMem(k, v);
       }
+      await idbSetMany(data.items);
       return { ok: true, source: "api", apiState };
     } catch {
       apiState = "down";
-      return { ok: false, source: "api", apiState };
+      return { ok: Object.keys(localItems).length > 0, source: "indexeddb", apiState, idbState };
     }
   };
 
@@ -108,6 +195,7 @@
         body: JSON.stringify({ items }),
       });
       if (!res.ok || !data || data.ok !== true) throw new Error("KV flush failed");
+      await idbSetMany(items);
       apiState = "ok";
       emit({ type: "flush", ok: true, changed: Number(data.changed || 0) || 0 });
     } catch {
@@ -146,6 +234,7 @@
     const k = String(key || "").trim();
     if (!k) return;
     setMem(k, value);
+    idbSetMany({ [k]: value }).catch(() => null);
     pending.set(k, value ?? null);
     scheduleFlush();
     try {
@@ -171,10 +260,16 @@
         if (v === null || typeof v === "undefined") continue;
         setMem(k, v);
       }
+      await idbSetMany(data.items);
       return { ok: true, apiState };
     } catch {
       apiState = "down";
-      return { ok: false, apiState };
+      const localItems = await idbGetMany(want);
+      for (const [k, v] of Object.entries(localItems)) {
+        if (v === null || typeof v === "undefined") continue;
+        setMem(k, v);
+      }
+      return { ok: Object.keys(localItems).length > 0, apiState, idbState };
     }
   };
 
@@ -193,6 +288,9 @@
     flush: flushPending,
     get apiState() {
       return apiState;
+    },
+    get idbState() {
+      return idbState;
     },
   });
 })();

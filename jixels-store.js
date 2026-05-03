@@ -82,10 +82,13 @@
         const kv = getKv();
         return kv?.apiState || "down";
       },
+      get idbState() {
+        const kv = getKv();
+        return kv?.idbState || "down";
+      },
     }),
     writable: false,
     enumerable: false,
     configurable: false,
   });
 })();
-
