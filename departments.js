@@ -338,13 +338,17 @@
   };
 
   const safe = (label, fn) => (...args) => {
+    const showError = (err) => {
+      const msg = String(err?.userMessage || err?.message || "Action could not complete. Please try again.").trim();
+      toast("Action failed", msg);
+    };
     try {
       const result = fn(...args);
       if (result && typeof result.then === "function") {
         return result.catch((err) => {
           console.error(label, err);
           audit("error", { label, message: String(err?.message || err), stack: String(err?.stack || "") });
-          alert("Something went wrong. Please try again.");
+          showError(err);
           return null;
         });
       }
@@ -353,7 +357,7 @@
       console.error(label, err);
       audit("error", { label, message: String(err?.message || err), stack: String(err?.stack || "") });
       // Keep UI alive.
-      alert("Something went wrong. Please try again.");
+      showError(err);
       return null;
     }
   };
@@ -1162,9 +1166,18 @@
       const q = String(queryRaw || "").trim().toLowerCase();
       if (!q) return null;
       const branches = Array.isArray(erp?.branches) ? erp.branches : [];
+      const digits = q.replace(/\D/g, "");
       const exact = branches.find((b) => String(b.id).toLowerCase() === q) ||
         branches.find((b) => String(b.name || "").trim().toLowerCase() === q);
       if (exact) return exact;
+      if (digits) {
+        const byNumber = branches.find((b) => {
+          const idDigits = String(b.id || "").replace(/\D/g, "");
+          const nameDigits = String(b.name || "").replace(/\D/g, "");
+          return idDigits === digits || nameDigits === digits || Number(idDigits) === Number(digits) || Number(nameDigits) === Number(digits);
+        });
+        if (byNumber) return byNumber;
+      }
       return branches.find((b) => String(b.name || "").toLowerCase().includes(q)) || null;
     };
 
@@ -1173,6 +1186,13 @@
     const setPayrollStatus = (text) => {
       if (!payrollStatus) return;
       payrollStatus.textContent = String(text || "");
+    };
+
+    const showPayrollEmpty = (message, colSpan = 9) => {
+      if (payrollTbody) {
+        payrollTbody.innerHTML = `<tr><td colspan="${colSpan}">${escapeHtml(message || "No records found.")}</td></tr>`;
+      }
+      setPayrollStatus(message);
     };
 
     const syncEmployeeCountsToERP = (hrState, erpState) => {
@@ -1212,7 +1232,7 @@
       if (branch && erp?.branches) {
         const current = String(branch.value || "");
         branch.innerHTML = erp.branches
-          .map((b) => `<option value="${b.id}">${b.name}</option>`)
+          .map((b) => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.name || b.id)}</option>`)
           .join("");
         if (current) branch.value = current;
       }
@@ -1409,13 +1429,29 @@
       hr = loadJson(HR_KEY, hr);
       const erp = loadJson(ERP_KEY, null);
       const b = findBranchByQuery(erp, branchQuery?.value);
+      const branches = Array.isArray(erp?.branches) ? erp.branches : [];
+      if (!branches.length) {
+        preview = { mode: "none", branchId: "", branchName: "" };
+        showPayrollEmpty("There is no branch registered yet.");
+        return;
+      }
+      if (!String(branchQuery?.value || "").trim()) {
+        preview = { mode: "none", branchId: "", branchName: "" };
+        showPayrollEmpty("Enter a branch name or ID first.");
+        branchQuery?.focus?.();
+        return;
+      }
       if (!b) {
         preview = { mode: "none", branchId: "", branchName: "" };
-        renderPayrollPreview([], "Branch not found");
+        showPayrollEmpty("Branch not found. Try Branch 01, b01, or the exact branch name.");
         return;
       }
       preview = { mode: "branch", branchId: String(b.id), branchName: String(b.name || b.id) };
       const list = (hr.employees || []).filter((e) => e.status === "active" && String(e.branchId) === String(b.id));
+      if (!list.length) {
+        showPayrollEmpty(`Branch: ${preview.branchName} • no active employees found.`);
+        return;
+      }
       renderPayrollPreview(list, `Branch: ${preview.branchName}`);
     };
 
@@ -1424,6 +1460,10 @@
       hr = loadJson(HR_KEY, hr);
       preview = { mode: "all", branchId: "", branchName: "" };
       const list = (hr.employees || []).filter((e) => e.status === "active");
+      if (!list.length) {
+        showPayrollEmpty("No active employees found.");
+        return;
+      }
       renderPayrollPreview(list, "All employees");
     };
 
@@ -1502,8 +1542,15 @@
       hr = loadJson(HR_KEY, hr);
       const erp = loadJson(ERP_KEY, null);
       const b = findBranchByQuery(erp, branchQuery?.value);
-      if (!b) return renderPayrollPreview([], "Branch not found");
+      const branches = Array.isArray(erp?.branches) ? erp.branches : [];
+      if (!branches.length) return showPayrollEmpty("There is no branch registered yet.");
+      if (!String(branchQuery?.value || "").trim()) {
+        branchQuery?.focus?.();
+        return showPayrollEmpty("Enter a branch name or ID first.");
+      }
+      if (!b) return showPayrollEmpty("Branch not found. Try Branch 01, b01, or the exact branch name.");
       const list = (hr.employees || []).filter((e) => e.status === "active" && String(e.branchId) === String(b.id));
+      if (!list.length) return showPayrollEmpty(`Branch: ${String(b.name || b.id)} • no active employees found.`);
       forwardEmployees(list, `Branch: ${String(b.name || b.id)}`);
     };
 
