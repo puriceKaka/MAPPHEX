@@ -115,6 +115,7 @@
   const saveAccounts = (accounts) => saveJson(BRANCH_ACCOUNTS_KEY, accounts);
 
   const normalized = (value) => String(value || "").trim().toLowerCase();
+  const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
 
   const accountIdentityTaken = (email, username) => {
     const e = normalized(email);
@@ -177,12 +178,29 @@
       const p1 = String(password.value || "");
       const p2 = String(confirmPassword.value || "");
 
+      if (!c) {
+        error.textContent = "County is required.";
+        county.focus();
+        return;
+      }
+      if (!a) {
+        error.textContent = "Area is required.";
+        area.focus();
+        return;
+      }
       if (u.length < 2) {
         error.textContent = "Username is required.";
+        username.focus();
+        return;
+      }
+      if (!validEmail(m)) {
+        error.textContent = "Enter a valid email address.";
+        email.focus();
         return;
       }
       if (p1.length < 8) {
         error.textContent = "Password must be at least 8 characters.";
+        password.focus();
         return;
       }
       if (p1 !== p2) {

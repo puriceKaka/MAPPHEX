@@ -2722,9 +2722,10 @@
     const render = () => {
       erp = loadJson(ERP_KEY, erp);
       if (branchSelect) {
-        branchSelect.innerHTML = (erp.branches || [])
-          .map((b) => `<option value="${b.id}">${b.name}</option>`)
-          .join("");
+        const branches = Array.isArray(erp.branches) ? erp.branches : [];
+        branchSelect.innerHTML = branches.length
+          ? branches.map((b) => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.name || b.id)}</option>`).join("")
+          : `<option value="">No branches registered</option>`;
       }
       const bId = String(branchSelect?.value || erp.branches?.[0]?.id || "");
       const branch = (erp.branches || []).find((b) => b.id === bId) || null;
@@ -2747,7 +2748,10 @@
       erp = loadJson(ERP_KEY, erp);
       const bId = String(branchSelect?.value || "").trim();
       const branch = (erp.branches || []).find((b) => b.id === bId) || null;
-      if (!branch) return;
+      if (!branch) {
+        toast("No branch selected", "Create or approve a branch before adding phones.");
+        return;
+      }
 
       const m = String(model?.value || "").trim();
       const c = String(color?.value || "").trim();
@@ -2755,9 +2759,26 @@
       const sn = String(serial?.value || "").trim();
       const pr = Math.max(0, Number(price?.value || 0));
 
-      if (!m) return model?.focus?.();
-      if (!sn) return serial?.focus?.();
-      if (!Number.isFinite(pr) || pr <= 0) return price?.focus?.();
+      if (!m) {
+        toast("Missing phone data", "Model is required.");
+        return model?.focus?.();
+      }
+      if (!c) {
+        toast("Missing phone data", "Color is required.");
+        return color?.focus?.();
+      }
+      if (!s) {
+        toast("Missing phone data", "Storage is required.");
+        return storage?.focus?.();
+      }
+      if (!sn) {
+        toast("Missing phone data", "Serial number is required.");
+        return serial?.focus?.();
+      }
+      if (!Number.isFinite(pr) || pr <= 0) {
+        toast("Missing phone data", "Enter a valid price greater than zero.");
+        return price?.focus?.();
+      }
 
       branch.phones = Array.isArray(branch.phones) ? branch.phones : [];
       branch.soldPhones = Array.isArray(branch.soldPhones) ? branch.soldPhones : [];
@@ -2765,7 +2786,10 @@
       const exists =
         branch.phones.some((p) => String(p.serial || "").toLowerCase() === sn.toLowerCase()) ||
         branch.soldPhones.some((p) => String(p.serial || "").toLowerCase() === sn.toLowerCase());
-      if (exists) return serial?.focus?.();
+      if (exists) {
+        toast("Duplicate serial", "This phone serial already exists or was already sold.");
+        return serial?.focus?.();
+      }
 
       branch.phones.push({
         serial: sn,
@@ -2785,6 +2809,10 @@
       saveJson(ERP_KEY, erp);
 
       if (serial) serial.value = "";
+      if (model) model.value = "";
+      if (color) color.value = "";
+      if (storage) storage.value = "";
+      if (price) price.value = "";
       render();
     };
 
@@ -2793,46 +2821,55 @@
       const agentAccounts = loadJson(AGENT_ACCOUNTS_KEY, []);
       const deptAccounts = loadJson(ACCOUNTS_KEY, []);
       const director = loadJson(DIRECTOR_ACCOUNT_KEY, null);
+      const seen = new Set();
       return [
         ...(Array.isArray(branchAccounts) ? branchAccounts : []).map((a) => ({ type: "branch", key: BRANCH_ACCOUNTS_KEY, account: a })),
         ...(Array.isArray(agentAccounts) ? agentAccounts : []).map((a) => ({ type: "agent", key: AGENT_ACCOUNTS_KEY, account: a })),
         ...(Array.isArray(deptAccounts) ? deptAccounts : []).map((a) => ({ type: "department", key: ACCOUNTS_KEY, account: a })),
         ...(director ? [{ type: "director", key: DIRECTOR_ACCOUNT_KEY, account: director }] : []),
-      ];
+      ].filter((row) => {
+        const a = row.account || {};
+        const id = String(a.id || "").trim();
+        const username = String(a.username || a.name || "").trim().toLowerCase();
+        const email = String(a.email || "").trim().toLowerCase();
+        if (!id && !username && !email) return false;
+        const dedupeKey = `${row.type}:${id || email || username}`;
+        if (seen.has(dedupeKey)) return false;
+        seen.add(dedupeKey);
+        return true;
+      });
     };
 
     const updateAccountStatus = async (key, accountId, status) => {
       if (key === DIRECTOR_ACCOUNT_KEY) return;
+      const nextStatus = String(status || "").trim().toLowerCase();
+      if (nextStatus !== "approved" && nextStatus !== "rejected") return;
       const list = loadJson(key, []);
       const rows = Array.isArray(list) ? list : [];
       const idx = rows.findIndex((a) => String(a.id || "") === String(accountId || ""));
       if (idx === -1) return;
-      rows[idx] = { ...rows[idx], status, reviewedAt: isoNow(), reviewedBy: "admin" };
+      if (String(rows[idx].status || "").toLowerCase() === nextStatus) return;
+      rows[idx] = { ...rows[idx], status: nextStatus, reviewedAt: isoNow(), reviewedBy: "admin" };
       saveJson(key, rows);
 
       if (key === BRANCH_ACCOUNTS_KEY) {
         erp = loadJson(ERP_KEY, erp);
         const branch = (erp.branches || []).find((b) => b.id === rows[idx].branchId);
         if (branch) {
-          branch.registrationStatus = status;
+          branch.registrationStatus = nextStatus;
           branch.updatedAt = isoNow();
           erp.lastUpdated = isoNow();
           saveJson(ERP_KEY, erp);
         }
       }
-      audit("admin_account_status", { accountId, key, status });
+      audit("admin_account_status", { accountId, key, status: nextStatus });
       try {
         await getStore()?.flush?.();
       } catch {
         // IndexedDB already has the approval locally.
       }
-      if (status === "approved") {
-        toast("Approved successful", "The account is approved and can login now.");
-      } else if (status === "rejected") {
-        toast("Rejected successful", "The account has been rejected.");
-      } else {
-        toast("Account updated", `Account ${status}.`);
-      }
+      if (nextStatus === "approved") toast("Account approved", "The user can log in now.");
+      if (nextStatus === "rejected") toast("Account rejected", "The user cannot log in until approved.");
       renderAccounts();
       render();
     };
@@ -2858,22 +2895,27 @@
       if (!accountsTbody) return;
       accountsTbody.textContent = "";
       const rows = loadAccountRows();
+      if (!rows.length) {
+        accountsTbody.innerHTML = `<tr><td colspan="7">No account registrations found.</td></tr>`;
+        return;
+      }
       for (const row of rows) {
         const a = row.account || {};
+        const status = String(a.status || "approved").toLowerCase();
         const tr = document.createElement("tr");
         tr.innerHTML = `<td></td><td></td><td></td><td></td><td></td><td></td><td></td>`;
         tr.children[0].textContent = row.type;
         tr.children[1].textContent = a.username || a.name || "—";
         tr.children[2].textContent = a.email || "—";
         tr.children[3].textContent = a.branchId || a.department || "—";
-        tr.children[4].textContent = String(a.status || "approved");
+        tr.children[4].textContent = status.charAt(0).toUpperCase() + status.slice(1);
         tr.children[5].textContent = a.createdAt ? new Date(a.createdAt).toLocaleString() : "—";
 
         const actions = document.createElement("div");
         actions.className = "report-buttons";
         actions.style.justifyContent = "flex-start";
 
-        if (row.key !== DIRECTOR_ACCOUNT_KEY && String(a.status || "").toLowerCase() !== "approved") {
+        if (row.key !== DIRECTOR_ACCOUNT_KEY && status !== "approved") {
           const approve = document.createElement("button");
           approve.className = "btn primary";
           approve.type = "button";
@@ -2882,7 +2924,7 @@
           actions.appendChild(approve);
         }
 
-        if (row.key !== DIRECTOR_ACCOUNT_KEY && String(a.status || "").toLowerCase() !== "rejected") {
+        if (row.key !== DIRECTOR_ACCOUNT_KEY && status !== "rejected") {
           const reject = document.createElement("button");
           reject.className = "btn";
           reject.type = "button";
