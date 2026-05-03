@@ -256,6 +256,37 @@
         <p id="tx-helper" class="muted" style="padding: 0 18px 12px; margin: 0;"></p>
         <p id="tx-sms" class="muted" style="padding: 0 18px 12px; margin: 0;"></p>
 
+        <div class="panel-header" style="border-top: 1px solid rgba(255,255,255,0.08);">
+          <h2>Credit Repayment</h2>
+          <div class="panel-actions">
+            <button id="credit-pay-btn" class="btn primary" type="button">Record payment</button>
+          </div>
+        </div>
+
+        <div class="branch-form">
+          <label class="field">
+            <span>Credit serial</span>
+            <input id="credit-serial" type="text" placeholder="Sold phone serial" />
+          </label>
+          <label class="field">
+            <span>Payment channel</span>
+            <select id="credit-channel">
+              <option value="mpesa">M-Pesa</option>
+              <option value="bank">Bank</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Payment amount (KES)</span>
+            <input id="credit-amount" type="number" min="1" step="1" placeholder="e.g. 1000" />
+          </label>
+          <label class="field">
+            <span>Payment reference</span>
+            <input id="credit-ref" type="text" placeholder="Auto-generated if blank" />
+          </label>
+        </div>
+
+        <p id="credit-helper" class="muted" style="padding: 0 18px 12px; margin: 0;"></p>
+
         <div class="table-wrap" role="region" aria-label="Transactions list" tabindex="0">
           <table class="table">
             <thead>

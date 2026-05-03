@@ -3067,7 +3067,7 @@
               <td>${escapeHtml(tx.serial || "—")}</td>
               <td>${escapeHtml(tx.customerPhone || "—")}</td>
               <td class="num">${formatInt(Number(tx.amount || 0) || 0)}</td>
-              <td class="num">${formatInt(Number(tx.amountPaid ?? tx.paidAmount ?? 0) || 0)}</td>
+              <td class="num">${formatInt(Number(tx.creditPaidTotal ?? tx.amountPaid ?? tx.paidAmount ?? 0) || 0)}</td>
               <td class="num">${formatInt(Number(tx.balance || 0) || 0)}</td>
               <td>${escapeHtml(tx.creditDueDate || "—")}</td>
             </tr>`,

@@ -348,6 +348,12 @@
     const exportBtn = $("#tx-export-btn");
     const helper = $("#tx-helper");
     const smsLine = $("#tx-sms");
+    const creditSerial = $("#credit-serial");
+    const creditChannel = $("#credit-channel");
+    const creditAmount = $("#credit-amount");
+    const creditRef = $("#credit-ref");
+    const creditPayBtn = $("#credit-pay-btn");
+    const creditHelper = $("#credit-helper");
 
     const txTbody = $("#tx-tbody");
     const invTbody = $("#inv-tbody");
@@ -438,14 +444,18 @@
       for (const tx of rows) {
         const saleType = String(tx.saleType || "cash").toLowerCase();
         const amount = Number(tx.amount || 0) || 0;
-        const paid = Number(tx.amountPaid ?? tx.paidAmount ?? amount) || 0;
+        const paid = saleType === "credit"
+          ? Number(tx.creditPaidTotal ?? tx.amountPaid ?? tx.paidAmount ?? 0) || 0
+          : Number(tx.amountPaid ?? tx.paidAmount ?? amount) || 0;
         const balance = Math.max(0, Number(tx.balance ?? (amount - paid)) || 0);
         const status =
-          saleType === "credit"
-            ? balance > 0
-              ? `Credit due${tx.creditDueDate ? ` ${tx.creditDueDate}` : ""}`
-              : "Credit cleared"
-            : "Completed";
+          saleType === "credit_payment"
+            ? `Credit payment • balance KES ${formatInt(balance)}`
+            : saleType === "credit"
+              ? balance > 0
+                ? `Credit due${tx.creditDueDate ? ` ${tx.creditDueDate}` : ""}`
+                : "Credit cleared"
+              : "Completed";
         const tr = document.createElement("tr");
         tr.innerHTML = `<td></td><td></td><td></td><td></td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td></td>`;
         tr.children[0].textContent = tx.at ? new Date(tx.at).toLocaleString() : "—";
@@ -460,6 +470,136 @@
         tr.children[9].textContent = status;
         txTbody.appendChild(tr);
       }
+    };
+
+    const findOpenCreditSale = (branch, serialRaw) => {
+      const serial = String(serialRaw || "").trim().toLowerCase();
+      if (!serial) return null;
+      const txLog = Array.isArray(branch?.txLog) ? branch.txLog : [];
+      for (let i = txLog.length - 1; i >= 0; i -= 1) {
+        const tx = txLog[i];
+        if (String(tx?.saleType || "").toLowerCase() !== "credit") continue;
+        if (String(tx.serial || "").toLowerCase() !== serial) continue;
+        const amount = Number(tx.amount || 0) || 0;
+        const paid = Number(tx.amountPaid ?? tx.paidAmount ?? 0) || 0;
+        const balance = Math.max(0, Number(tx.balance ?? (amount - paid)) || 0);
+        if (balance > 0) return { tx, index: i, balance };
+      }
+      return null;
+    };
+
+    const updateSoldCreditRecord = (branch, saleTx, paidNow, nextBalance, at, ref) => {
+      branch.soldPhones = Array.isArray(branch.soldPhones) ? branch.soldPhones : [];
+      const sold = branch.soldPhones.find((p) => String(p.serial || "").toLowerCase() === String(saleTx.serial || "").toLowerCase());
+      if (!sold) return;
+      sold.soldPaid = (Number(sold.soldPaid ?? sold.soldAmount ?? 0) || 0) + paidNow;
+      sold.creditPaidTotal = sold.soldPaid;
+      sold.creditBalance = nextBalance;
+      sold.creditStatus = nextBalance > 0 ? "open" : "cleared";
+      sold.lastCreditPaymentAt = at;
+      sold.lastCreditPaymentRef = ref;
+    };
+
+    const recordCreditPayment = async () => {
+      const branch = normalizeBranch(getBranch());
+      if (!branch) return;
+      const serial = String(creditSerial?.value || "").trim();
+      const channel = String(creditChannel?.value || "mpesa").toLowerCase();
+      let ref = String(creditRef?.value || "").trim();
+      const rawAmount = Number(creditAmount?.value || 0);
+      if (!serial) {
+        if (creditHelper) creditHelper.textContent = "Enter the sold phone serial for the open credit sale.";
+        return creditSerial?.focus?.();
+      }
+      if (!Number.isFinite(rawAmount) || rawAmount <= 0) {
+        if (creditHelper) creditHelper.textContent = "Enter a valid payment amount.";
+        return creditAmount?.focus?.();
+      }
+
+      const found = findOpenCreditSale(branch, serial);
+      if (!found) {
+        if (creditHelper) creditHelper.textContent = "No open credit sale found for this serial.";
+        return creditSerial?.focus?.();
+      }
+
+      const saleTx = found.tx;
+      const paidNow = Math.min(rawAmount, found.balance);
+      const nextBalance = Math.max(0, found.balance - paidNow);
+      const at = isoNow();
+      if (!ref) {
+        const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+        ref = `${channel.toUpperCase()}-${branch.id}-CREDIT-${stamp}`;
+      }
+
+      let mpesaResponse = null;
+      if (channel === "mpesa" && paidNow > 0) {
+        if (creditHelper) creditHelper.textContent = "Sending M-Pesa STK push for credit payment...";
+        try {
+          mpesaResponse = await requestMpesaStk({
+            amount: paidNow,
+            phoneNumber: saleTx.customerPhone,
+            accountReference: ref,
+            transactionDesc: `Jixels credit payment ${saleTx.serial || ""}`.trim(),
+          });
+        } catch (err) {
+          if (creditHelper) creditHelper.textContent = String(err?.message || "M-Pesa STK push failed.");
+          return;
+        }
+      }
+
+      saleTx.creditPaidTotal = (Number(saleTx.creditPaidTotal ?? saleTx.amountPaid ?? saleTx.paidAmount ?? 0) || 0) + paidNow;
+      saleTx.balance = nextBalance;
+      saleTx.creditStatus = nextBalance > 0 ? "open" : "cleared";
+      saleTx.creditPayments = Array.isArray(saleTx.creditPayments) ? saleTx.creditPayments : [];
+      saleTx.creditPayments.push({ at, channel, ref, amount: paidNow, balanceAfter: nextBalance });
+
+      const paymentTx = {
+        at,
+        channel,
+        ref,
+        amount: paidNow,
+        amountPaid: paidNow,
+        balance: nextBalance,
+        saleType: "credit_payment",
+        creditParentRef: saleTx.ref || "",
+        creditDueDate: saleTx.creditDueDate || "",
+        creditStatus: nextBalance > 0 ? "open" : "cleared",
+        serial: saleTx.serial,
+        customerPhone: saleTx.customerPhone,
+        agent: { id: account.id, username: account.username },
+        phone: saleTx.phone || null,
+        mpesa: mpesaResponse?.response || null,
+      };
+
+      branch.txLog = Array.isArray(branch.txLog) ? branch.txLog : [];
+      branch.txLog.push(paymentTx);
+      branch.txLog = branch.txLog.slice(-400);
+      if (!branch.financeSummary || typeof branch.financeSummary !== "object") {
+        branch.financeSummary = { mpesaIn: 0, bankIn: 0, txCount: 0, lastTxAt: "" };
+      }
+      if (channel === "bank") branch.financeSummary.bankIn += paidNow;
+      else branch.financeSummary.mpesaIn += paidNow;
+      branch.financeSummary.txCount += 1;
+      branch.financeSummary.lastTxAt = at;
+      updateSoldCreditRecord(branch, saleTx, paidNow, nextBalance, at, ref);
+      branch.updatedAt = at;
+      persist();
+      notifyTransaction(paymentTx, branch);
+      queueSms(
+        saleTx.customerPhone,
+        nextBalance > 0
+          ? `Jixels Technologies: Credit payment received KES ${formatInt(paidNow)} for serial ${saleTx.serial}. Balance KES ${formatInt(nextBalance)}. Ref: ${ref}.`
+          : `Jixels Technologies: Credit cleared for serial ${saleTx.serial}. Last payment KES ${formatInt(paidNow)}. Ref: ${ref}. Thank you.`,
+      );
+
+      if (creditSerial) creditSerial.value = "";
+      if (creditAmount) creditAmount.value = "";
+      if (creditRef) creditRef.value = "";
+      if (creditHelper) creditHelper.textContent = nextBalance > 0
+        ? `Payment recorded. Remaining balance KES ${formatInt(nextBalance)}.`
+        : "Payment recorded. Credit cleared.";
+      renderKPIs();
+      renderHistory();
     };
 
     const updateTxFromSerial = () => {
@@ -554,6 +694,7 @@
         ref,
         amount,
         amountPaid,
+        creditPaidTotal: saleType === "credit" ? amountPaid : undefined,
         balance,
         saleType,
         creditDueDate,
@@ -590,6 +731,7 @@
         soldRef: ref,
         soldAmount: amount,
         soldPaid: amountPaid,
+        creditPaidTotal: saleType === "credit" ? amountPaid : undefined,
         creditBalance: balance,
         saleType,
         creditDueDate,
@@ -643,12 +785,13 @@
       const branch = normalizeBranch(getBranch());
       if (!branch) return;
       const rows = [
-        ["Date", "Channel", "Reference", "Serial", "CustomerPhone", "AmountKES", "PaidKES", "BalanceKES", "SaleType", "CreditDueDate", "CreditStatus", "Model", "Agent"],
+        ["Date", "Channel", "Reference", "Serial", "CustomerPhone", "AmountKES", "PaidKES", "CreditPaidToDateKES", "BalanceKES", "SaleType", "CreditDueDate", "CreditStatus", "CreditParentRef", "Model", "Agent"],
       ];
       for (const tx of branch.txLog || []) {
         const modelRaw = tx?.phone?.model ?? tx?.model ?? "";
         const amount = Number(tx.amount || 0) || 0;
         const paid = Number(tx.amountPaid ?? tx.paidAmount ?? amount) || 0;
+        const creditPaidTotal = Number(tx.creditPaidTotal ?? paid) || 0;
         const balance = Math.max(0, Number(tx.balance ?? (amount - paid)) || 0);
         rows.push([
           tx.at || "",
@@ -658,10 +801,12 @@
           tx.customerPhone || "",
           amount,
           paid,
+          creditPaidTotal,
           balance,
           tx.saleType || "cash",
           tx.creditDueDate || "",
           tx.creditStatus || "",
+          tx.creditParentRef || "",
           modelRaw || "",
           tx?.agent?.username || "",
         ]);
@@ -719,6 +864,7 @@
     if (serialInput) serialInput.addEventListener("input", () => updateTxFromSerial());
     if (addBtn) addBtn.addEventListener("click", () => completeSale());
     if (exportBtn) exportBtn.addEventListener("click", () => exportCsv());
+    if (creditPayBtn) creditPayBtn.addEventListener("click", () => recordCreditPayment());
 
     sync();
     navigateTo(String(window.location.hash || "").replace("#", "") || "overview");
