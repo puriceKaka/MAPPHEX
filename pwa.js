@@ -45,6 +45,12 @@
       .pwa-install-btn[hidden] {
         display: none;
       }
+      body:has(.pwa-install-btn:not([hidden])) {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      }
+      body.has-pwa-install {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      }
       .pwa-install-btn.is-muted {
         background: rgba(10, 12, 22, 0.88);
         border-color: rgba(255, 255, 255, 0.18);
@@ -75,6 +81,7 @@
     const btn = getButton();
     if (!btn) return;
     btn.hidden = isStandalone();
+    document.body.classList.toggle("has-pwa-install", !btn.hidden);
   };
 
   const createInstallButton = () => {
@@ -113,6 +120,7 @@
       }
     });
     document.body.appendChild(btn);
+    document.body.classList.add("has-pwa-install");
     hideButtonIfInstalled();
   };
 
