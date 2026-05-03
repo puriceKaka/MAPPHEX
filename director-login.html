@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Director Login • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="director-login.css" />
+  </head>
+  <body data-page="director-login">
+    <main class="auth-shell">
+      <section class="auth-card" aria-label="Director login">
+        <header class="auth-header">
+          <h1>Jixels Technologies</h1>
+          <p class="muted">Director access (ERP)</p>
+        </header>
+
+        <form id="director-login-form" class="auth-form" autocomplete="off">
+          <label class="field">
+            <span>Email or Username</span>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              inputmode="text"
+              placeholder="Username or email"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+          </label>
+
+          <button id="login-btn" class="btn primary" type="submit">
+            Login
+          </button>
+
+          <label class="remember-row">
+            <input id="rememberMe" type="checkbox" />
+            <span class="muted">Remember me</span>
+          </label>
+
+          <p id="login-error" class="form-error" role="alert" aria-live="polite"></p>
+
+          <p class="muted" style="margin: 0; font-size: 13px;">
+            New Director?
+            <a href="director-register.html" style="text-decoration: underline;"
+              >Create account</a
+            >
+          </p>
+
+        </form>
+
+        <footer class="auth-footer muted">
+          Only the Director role can access the director dashboard and resources.
+        </footer>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="director-login.js"></script>
+  </body>
+</html>

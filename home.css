@@ -1,0 +1,186 @@
+/* Portal hub page styles (extends director.css) */
+
+.home-layout {
+  gap: 18px;
+}
+
+.hero {
+  position: relative;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("images/portal-bg.svg") center / cover no-repeat;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  padding: 22px 18px 18px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.hero-subtitle {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.hero-visual {
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+}
+
+.phone-stack {
+  position: relative;
+  width: min(360px, 100%);
+  height: 260px;
+}
+
+.phone-img {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 24px;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.45));
+}
+
+.phone-img-1 {
+  left: 0;
+  top: 26px;
+  transform: rotate(-10deg);
+  opacity: 0.92;
+}
+
+.phone-img-2 {
+  left: 74px;
+  top: 6px;
+  transform: rotate(6deg);
+}
+
+.phone-img-3 {
+  left: 146px;
+  top: 44px;
+  transform: rotate(14deg);
+  opacity: 0.92;
+}
+
+.portal-grid {
+  padding: 16px 18px 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.portal-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 14px 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.portal-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.portal-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.95), rgba(34, 211, 238, 0.75));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.portal-title {
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.portal-desc {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.portal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.phones-grid {
+  padding: 16px 18px 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.phone-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 14px 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.phone-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.phone-name {
+  font-weight: 900;
+}
+
+.phone-meta .muted {
+  font-size: 12px;
+}
+
+@media (max-width: 980px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+  .phones-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-visual {
+    order: -1;
+  }
+}

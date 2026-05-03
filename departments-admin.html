@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Department • Jixels Technologies</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="images/jixels-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="departments.css" />
+  </head>
+  <body data-page="departments-admin">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Admin Department</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="dept-badge" class="badge" aria-label="department">ADMIN</span>
+        <button id="dept-logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Add Phone to Branch Stock</h2>
+          <div class="panel-actions">
+            <button id="admin-add-phone" class="btn primary" type="button">Add phone</button>
+          </div>
+        </div>
+
+        <div class="branch-form">
+          <label class="field">
+            <span>Branch</span>
+            <select id="admin-branch"></select>
+          </label>
+          <label class="field">
+            <span>Model</span>
+            <input id="admin-model" type="text" placeholder="e.g. iPhone 15" />
+          </label>
+          <label class="field">
+            <span>Color</span>
+            <input id="admin-color" type="text" placeholder="e.g. Black" />
+          </label>
+          <label class="field">
+            <span>Storage</span>
+            <input id="admin-storage" type="text" placeholder="e.g. 128GB" />
+          </label>
+          <label class="field">
+            <span>Serial</span>
+            <input id="admin-serial" type="text" placeholder="e.g. SN-000123" />
+          </label>
+          <label class="field">
+            <span>Price (KES)</span>
+            <input id="admin-price" type="number" min="0" step="1" placeholder="e.g. 25000" />
+          </label>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Branch phones" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Serial</th>
+                <th>Model</th>
+                <th>Color</th>
+                <th>Storage</th>
+                <th class="num">Price</th>
+              </tr>
+            </thead>
+            <tbody id="admin-inv-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Accounts and Approvals</h2>
+          <div class="panel-actions">
+            <button id="admin-refresh-accounts" class="btn" type="button">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap" role="region" aria-label="Accounts management" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>User</th>
+                <th>Email</th>
+                <th>Branch</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-accounts-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Data Governance</h2>
+          <div class="panel-actions">
+            <button id="admin-export-data" class="btn" type="button">Export JSON</button>
+            <button id="admin-delete-data" class="btn" type="button">Delete all data</button>
+          </div>
+        </div>
+        <p class="muted small-note" style="padding: 0 18px 18px; margin: 0;">
+          Deletes ERP, HR, accounts, audit, notifications, and queued SMS from the shared store after confirmation.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Admin Report Center</h2>
+          <div class="panel-actions">
+            <button id="dept-report-btn" class="btn primary" type="button">Generate report</button>
+            <button id="dept-report-doc-btn" class="btn" type="button">Download Word</button>
+            <button id="dept-report-pdf-btn" class="btn" type="button">Print / PDF</button>
+          </div>
+        </div>
+
+        <div class="branch-form" style="padding-bottom: 0;">
+          <label class="field">
+            <span>Due date</span>
+            <input id="dept-report-due-date" type="date" />
+          </label>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div id="dept-report-output" class="report-output" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+    <script src="pwa.js"></script>
+  </body>
+</html>

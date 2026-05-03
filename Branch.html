@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Branch Dashboard • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="branch.css" />
+  </head>
+  <body data-page="branch-dashboard">
+    <header class="topbar">
+      <div class="brand">
+        <button id="menu-toggle" class="icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="icon-hamburger" aria-hidden="true"></span>
+        </button>
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Branch ERP Dashboard</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="branch-badge" class="badge" aria-label="branch">Branch</span>
+        <button id="branch-logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <div class="branch-shell">
+      <aside id="branch-sidebar" class="branch-sidebar" aria-label="Branch menu">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Menu</div>
+          <button id="menu-close" class="icon-btn" type="button" aria-label="Close menu">
+            <span class="icon-close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link active" href="#overview" data-nav="overview">Realtime overview</a>
+          <a class="sidebar-link" href="#inventory" data-nav="inventory">Inventory entry</a>
+          <a class="sidebar-link" href="#damages" data-nav="damages">Damages &amp; loss</a>
+          <a class="sidebar-link" href="#transactions" data-nav="transactions">Sales completed</a>
+          <a class="sidebar-link" href="#reports" data-nav="reports">Reports</a>
+        </nav>
+        <div class="sidebar-foot muted">
+          Inventory is managed here. Sales transactions are completed by Agents.
+        </div>
+      </aside>
+      <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true"></div>
+
+      <main class="layout">
+      <section class="panel" id="overview" data-section="overview">
+        <div class="panel-header">
+          <h2>Realtime Overview</h2>
+          <div class="panel-actions">
+            <span id="ledger-indicator" class="pill">Ledger OK</span>
+            <button id="branch-sync-btn" class="btn" type="button">Sync</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <article class="kpi">
+            <div class="kpi-label">Models</div>
+            <div id="b-kpi-models" class="kpi-value">0</div>
+            <div class="kpi-foot muted">This branch</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-label">Phones in stock</div>
+            <div id="b-kpi-stock" class="kpi-value">0</div>
+            <div class="kpi-foot muted">This branch</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-label">Phones sold</div>
+            <div id="b-kpi-sold" class="kpi-value">0</div>
+            <div class="kpi-foot muted">This branch</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-label">Top model</div>
+            <div id="b-kpi-top" class="kpi-value">—</div>
+            <div class="kpi-foot muted">Highest sold</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="inventory" data-section="inventory">
+        <div class="panel-header">
+          <h2>Inventory Entry</h2>
+          <div class="panel-actions">
+            <button id="add-phone-btn" class="btn primary" type="button">
+              Add phone
+            </button>
+          </div>
+        </div>
+
+        <div class="branch-form">
+          <label class="field">
+            <span>Phone model</span>
+            <input id="ph-model" type="text" placeholder="e.g. Samsung A15" />
+          </label>
+
+          <label class="field">
+            <span>Color</span>
+            <input id="ph-color" type="text" placeholder="e.g. Black" />
+          </label>
+
+          <label class="field">
+            <span>Storage</span>
+            <input id="ph-storage" type="text" placeholder="e.g. 128GB" />
+          </label>
+
+          <label class="field">
+            <span>Serial number</span>
+            <input id="ph-serial" type="text" placeholder="e.g. SN-000123" />
+          </label>
+
+          <label class="field">
+            <span>Price (KES)</span>
+            <input id="ph-price" type="number" min="0" step="1" placeholder="e.g. 25000" />
+          </label>
+
+          <div class="report-buttons" style="justify-content:flex-start;">
+            <button id="ph-save-btn" class="btn primary" type="button">Save phone</button>
+            <button id="ph-clear-btn" class="btn" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Inventory editor" tabindex="0">
+          <table class="table" id="branch-inventory-table">
+            <thead>
+              <tr>
+                <th>Serial</th>
+                <th>Model</th>
+                <th>Color</th>
+                <th>Storage</th>
+                <th class="num">Price</th>
+                <th>Status</th>
+                <th class="num">Action</th>
+              </tr>
+            </thead>
+            <tbody id="branch-inventory-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="damages" data-section="damages">
+        <div class="panel-header">
+          <h2>Damages & Loss</h2>
+          <div class="panel-actions muted">Recorded events are included in reports</div>
+        </div>
+
+        <div class="branch-form">
+          <label class="field">
+            <span>Model</span>
+            <input id="dl-model" type="text" placeholder="e.g. iPhone 15 Pro" />
+          </label>
+
+          <label class="field">
+            <span>Type</span>
+            <select id="dl-type">
+              <option value="damaged">Damaged</option>
+              <option value="lost">Lost</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Quantity</span>
+            <input id="dl-qty" type="number" min="1" step="1" placeholder="e.g. 2" />
+          </label>
+
+          <label class="field" style="grid-column: 1 / -1;">
+            <span>Notes</span>
+            <input id="dl-notes" type="text" placeholder="Optional (e.g. damaged screen during handling)" />
+          </label>
+
+          <div class="report-buttons" style="justify-content:flex-start; grid-column: 1 / -1;">
+            <button id="dl-add-btn" class="btn primary" type="button">Add record</button>
+            <button id="dl-export-btn" class="btn" type="button">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Damage and loss records" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Model</th>
+                <th class="num">Quantity</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="dl-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="transactions" data-section="transactions">
+        <div class="panel-header">
+          <h2>Sales Completed (Agent Portal)</h2>
+          <div class="panel-actions">
+            <a class="btn" href="agent-login.html">Open Agent Portal</a>
+            <button id="tx-export-btn" class="btn" type="button">Export CSV</button>
+          </div>
+        </div>
+
+        <p class="muted" style="padding: 0 18px 12px; margin: 0;">
+          Selling phones is done by Agents only. This list shows completed sales for this branch.
+        </p>
+
+        <div class="table-wrap" role="region" aria-label="Transactions list" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Model</th>
+                <th>Serial</th>
+                <th>Customer</th>
+                <th>Channel</th>
+                <th>Reference</th>
+                <th class="num">Amount (KES)</th>
+                <th>Status</th>
+                <th>Sold by</th>
+              </tr>
+            </thead>
+            <tbody id="tx-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="reports" data-section="reports">
+        <div class="panel-header">
+          <h2>Report Center</h2>
+          <div class="panel-actions">
+            <button id="branch-report-btn" class="btn primary" type="button">
+              Generate report
+            </button>
+            <button id="branch-report-csv-btn" class="btn" type="button">
+              Download CSV
+            </button>
+            <button id="branch-report-doc-btn" class="btn" type="button">
+              Download Word
+            </button>
+            <button id="branch-report-pdf-btn" class="btn" type="button">
+              Print / PDF
+            </button>
+            <button id="branch-charts-btn" class="btn" type="button">
+              Live charts
+            </button>
+          </div>
+        </div>
+
+        <div class="branch-form" style="padding-bottom: 0;">
+          <label class="field">
+            <span>Due date</span>
+            <input id="report-due-date" type="date" />
+          </label>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div id="branch-report-output" class="report-output" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" id="charts-panel" style="display:none;">
+        <div class="panel-header">
+          <h2>Live Charts (Branch)</h2>
+          <div class="panel-actions">
+            <button id="charts-close-btn" class="btn" type="button">Close</button>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">Inventory by model (stock)</div>
+            <canvas id="chart-stock" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">Sales by model (sold)</div>
+            <canvas id="chart-sold" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">Damaged vs Lost (qty)</div>
+            <canvas id="chart-dl" height="220"></canvas>
+          </div>
+        </div>
+        <p class="muted small-note" style="padding: 0 18px 18px;">
+          These charts are prepared for later connection to the e-commerce/CRM live data feed.
+        </p>
+      </section>
+      </main>
+    </div>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="branch.js"></script>
+  </body>
+</html>

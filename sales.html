@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales • Director Portal • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="departments.css" />
+  </head>
+  <body data-page="director-sales">
+    <header class="topbar">
+      <div class="brand">
+        <button id="menu-toggle" class="icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="icon-hamburger" aria-hidden="true"></span>
+        </button>
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Sales Overview (Director)</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <a class="btn" href="Director.html">Back</a>
+        <button id="logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <div class="portal-shell">
+      <aside id="portal-sidebar" class="portal-sidebar" aria-label="Director Sales menu">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Director</div>
+          <button id="menu-close" class="icon-btn" type="button" aria-label="Close menu">
+            <span class="icon-close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="Director.html">Dashboard</a>
+          <a class="sidebar-link" href="hr.html">HR</a>
+          <a class="sidebar-link" href="finance.html">Finance</a>
+          <a class="sidebar-link" href="operations.html">Operations</a>
+          <a class="sidebar-link active" href="sales.html">Sales</a>
+        </nav>
+      </aside>
+      <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true"></div>
+
+      <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Sales Snapshot</h2>
+          <div class="panel-actions">
+            <span id="realtime-indicator" class="pill">Live</span>
+            <button id="sync-btn" class="btn" type="button">Sync</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <article class="kpi">
+            <div class="kpi-label">Total sold</div>
+            <div id="sales-kpi-sold" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All branches</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Top branch</div>
+            <div id="sales-kpi-top-branch" class="kpi-value">—</div>
+            <div class="kpi-foot muted">By sales</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Top model</div>
+            <div id="sales-kpi-top-model" class="kpi-value">—</div>
+            <div class="kpi-foot muted">By sold</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Last ERP update</div>
+            <div id="sales-kpi-updated" class="kpi-value">—</div>
+            <div class="kpi-foot muted">Timestamp</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Top Models (Company)</h2>
+          <div class="panel-actions"></div>
+        </div>
+        <div class="table-wrap" role="region" aria-label="Top models table" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th class="num">Sold</th>
+                <th class="num">In stock</th>
+              </tr>
+            </thead>
+            <tbody id="sales-models-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+      </main>
+    </div>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+    <script src="ui-menu.js"></script>
+    <script src="director.js"></script>
+  </body>
+</html>

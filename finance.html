@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance • Director Portal • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="departments.css" />
+  </head>
+  <body data-page="director-finance">
+    <header class="topbar">
+      <div class="brand">
+        <button id="menu-toggle" class="icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="icon-hamburger" aria-hidden="true"></span>
+        </button>
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Finance Overview (Director)</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <a class="btn" href="Director.html">Back</a>
+        <button id="logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <div class="portal-shell">
+      <aside id="portal-sidebar" class="portal-sidebar" aria-label="Director Finance menu">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Director</div>
+          <button id="menu-close" class="icon-btn" type="button" aria-label="Close menu">
+            <span class="icon-close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link active" href="Director.html">Dashboard</a>
+          <a class="sidebar-link" href="Director.html#overview">Overview</a>
+          <a class="sidebar-link" href="Director.html#inventory-panel">Inventory by Branch</a>
+          <a class="sidebar-link" href="Director.html#report-center">Report Center</a>
+          <a class="sidebar-link" href="Director.html#report-output">Reports</a>
+        </nav>
+      </aside>
+      <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true"></div>
+
+      <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Finance Summary</h2>
+          <div class="panel-actions">
+            <span id="realtime-indicator" class="pill">Live</span>
+            <button id="sync-btn" class="btn" type="button">Sync</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <article class="kpi">
+            <div class="kpi-label">M-Pesa total (KES)</div>
+            <div id="fin-kpi-mpesa" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All branches</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Bank total (KES)</div>
+            <div id="fin-kpi-bank" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All branches</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Transactions</div>
+            <div id="fin-kpi-tx" class="kpi-value">0</div>
+            <div class="kpi-foot muted">Count</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Last ERP update</div>
+            <div id="fin-kpi-updated" class="kpi-value">—</div>
+            <div class="kpi-foot muted">Timestamp</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Branch Finance (Summary)</h2>
+          <div class="panel-actions">
+            <button id="fin-charts-btn" class="btn" type="button">Live charts</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Finance table" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Branch</th>
+                <th class="num">M-Pesa (KES)</th>
+                <th class="num">Bank (KES)</th>
+                <th class="num">Tx</th>
+                <th>Last tx</th>
+              </tr>
+            </thead>
+            <tbody id="fin-tbody"></tbody>
+          </table>
+        </div>
+        <p class="muted small-note" style="padding: 0 18px 18px;">
+          Transaction details stay encrypted at the branch. Director sees totals and counts.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Finance Report Center</h2>
+          <div class="panel-actions">
+            <button id="fin-report-btn" class="btn primary" type="button">
+              Generate report
+            </button>
+            <button id="fin-report-doc-btn" class="btn" type="button">
+              Download Word
+            </button>
+            <button id="fin-report-pdf-btn" class="btn" type="button">
+              Print / PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="branch-form" style="padding-bottom: 0;">
+          <label class="field">
+            <span>Due date</span>
+            <input id="fin-report-due-date" type="date" />
+          </label>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div id="fin-report-output" class="report-output" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" id="fin-charts-panel" style="display: none;">
+        <div class="panel-header">
+          <h2>Live Charts (Finance)</h2>
+          <div class="panel-actions">
+            <button id="fin-charts-close-btn" class="btn" type="button">Close</button>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="muted" style="font-size: 12px; margin-bottom: 8px;">
+              Top branches by M-Pesa (KES)
+            </div>
+            <canvas id="fin-chart-mpesa" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="muted" style="font-size: 12px; margin-bottom: 8px;">
+              Top branches by Bank (KES)
+            </div>
+            <canvas id="fin-chart-bank" height="220"></canvas>
+          </div>
+        </div>
+        <p class="muted small-note" style="padding: 0 18px 18px;">
+          Charts are prepared for later linkage to the e-commerce/CRM live data feed.
+        </p>
+      </section>
+      </main>
+    </div>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+    <script src="ui-menu.js"></script>
+    <script src="director.js"></script>
+  </body>
+</html>

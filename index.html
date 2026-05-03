@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jixels Technologies • Portal Hub</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="images/jixels-logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="images/jixels-logo.svg" />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body data-page="home">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">ERP Portal Hub</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <a class="btn" href="director-login.html">Director</a>
+        <a class="btn" href="branch-login.html">Branch</a>
+        <a class="btn primary" href="agent-login.html">Agent</a>
+        <a class="btn" href="departments.html">Departments</a>
+      </div>
+    </header>
+
+    <main class="layout home-layout">
+      <section class="panel hero" aria-label="Welcome">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1 class="hero-title">Welcome</h1>
+            <p class="muted hero-subtitle">
+              Choose a portal to continue. Agents sell phones, branches manage inventory, and Head Office tracks everything in realtime.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn primary" href="#portals">Open portals</a>
+              <a class="btn" href="#phones">View phones</a>
+            </div>
+
+            <p class="muted small-note" style="margin-top: 12px;">
+              Tip: To run locally, start the server with <code>node server/server.js</code> then open <code>http://127.0.0.1:3000</code>.
+            </p>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="phone-stack">
+              <img class="phone-img phone-img-1" src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=520&q=80" alt="" />
+              <img class="phone-img phone-img-2" src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=520&q=80" alt="" />
+              <img class="phone-img phone-img-3" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=520&q=80" alt="" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="portals" aria-label="Portals">
+        <div class="panel-header">
+          <h2>All Portals</h2>
+          <div class="panel-actions muted">Fast access</div>
+        </div>
+
+        <div class="portal-grid">
+          <article class="portal-card">
+            <div class="portal-card-top">
+              <div class="portal-icon" aria-hidden="true">D</div>
+              <div>
+                <div class="portal-title">Director Portal</div>
+                <div class="muted portal-desc">Company overview, reports, analytics.</div>
+              </div>
+            </div>
+            <div class="portal-actions">
+              <a class="btn primary" href="director-login.html">Login</a>
+              <a class="btn" href="director-register.html">Register</a>
+              <a class="btn" href="Director.html">Dashboard</a>
+            </div>
+          </article>
+
+          <article class="portal-card">
+            <div class="portal-card-top">
+              <div class="portal-icon" aria-hidden="true">B</div>
+              <div>
+                <div class="portal-title">Branch Portal</div>
+                <div class="muted portal-desc">Inventory entry and sold-phones tracking.</div>
+              </div>
+            </div>
+            <div class="portal-actions">
+              <a class="btn primary" href="branch-login.html">Login</a>
+              <a class="btn" href="branch-register.html">Register</a>
+              <a class="btn" href="Branch.html">Dashboard</a>
+            </div>
+          </article>
+
+          <article class="portal-card">
+            <div class="portal-card-top">
+              <div class="portal-icon" aria-hidden="true">A</div>
+              <div>
+                <div class="portal-title">Agent Portal</div>
+                <div class="muted portal-desc">Sell phones and complete transactions.</div>
+              </div>
+            </div>
+            <div class="portal-actions">
+              <a class="btn primary" href="agent-login.html">Login</a>
+              <a class="btn" href="agent-register.html">Register</a>
+              <a class="btn" href="Agent.html">Dashboard</a>
+            </div>
+          </article>
+
+          <article class="portal-card">
+            <div class="portal-card-top">
+              <div class="portal-icon" aria-hidden="true">P</div>
+              <div>
+                <div class="portal-title">Departments Portal</div>
+                <div class="muted portal-desc">HR, Finance, Operations, Sales, Admin.</div>
+              </div>
+            </div>
+            <div class="portal-actions">
+              <a class="btn primary" href="departments.html">Login</a>
+              <a class="btn" href="departments-register.html">Register</a>
+              <a class="btn" href="departments-admin.html">Admin</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="phones" aria-label="Phones">
+        <div class="panel-header">
+          <h2>Phones</h2>
+          <div class="panel-actions muted">Phone gallery</div>
+        </div>
+
+        <div class="phones-grid">
+          <article class="phone-card">
+            <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=640&q=80" alt="Samsung Galaxy phone" />
+            <div class="phone-meta">
+              <div class="phone-name">Samsung Galaxy S Series</div>
+              <div class="muted">128GB • 5G • Dual SIM</div>
+            </div>
+          </article>
+          <article class="phone-card">
+            <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=640&q=80" alt="iPhone model" />
+            <div class="phone-meta">
+              <div class="phone-name">iPhone Pro Series</div>
+              <div class="muted">256GB • Pro Camera</div>
+            </div>
+          </article>
+          <article class="phone-card">
+            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=640&q=80" alt="Android phone models" />
+            <div class="phone-meta">
+              <div class="phone-name">Android Flagship Models</div>
+              <div class="muted">AI Camera • Android</div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <script src="pwa.js"></script>
+  </body>
+</html>

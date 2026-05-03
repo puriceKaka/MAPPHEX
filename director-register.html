@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Director Account • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="director-register.css" />
+  </head>
+  <body data-page="director-register">
+    <main class="auth-shell">
+      <section class="auth-card" aria-label="Director registration">
+        <header class="auth-header">
+          <h1>Jixels Technologies</h1>
+          <p class="muted">Director account setup</p>
+        </header>
+
+        <form id="director-register-form" class="auth-form" autocomplete="off">
+          <label class="field">
+            <span>Username</span>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Username"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Email</span>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="e.g. yourname@gmail.com"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Create a strong password"
+              minlength="8"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Confirm password</span>
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Re-enter password"
+              minlength="8"
+              required
+            />
+          </label>
+
+          <button class="btn primary" type="submit">Create account</button>
+
+          <p
+            id="register-error"
+            class="form-error"
+            role="alert"
+            aria-live="polite"
+          ></p>
+
+          <p class="muted" style="margin: 0; font-size: 13px;">
+            Already have an account?
+            <a href="director-login.html" style="text-decoration: underline;"
+              >Login</a
+            >
+          </p>
+        </form>
+
+        <footer class="auth-footer muted">
+          This setup is stored on this browser only. Connect to a real backend for
+          production use.
+        </footer>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="director-register.js"></script>
+  </body>
+</html>

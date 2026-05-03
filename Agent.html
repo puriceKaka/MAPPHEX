@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Dashboard • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="agent.css" />
+  </head>
+  <body data-page="agent-dashboard">
+    <header class="topbar">
+      <div class="brand">
+        <button id="menu-toggle" class="icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="icon-hamburger" aria-hidden="true"></span>
+        </button>
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Agent Sales Dashboard</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="agent-badge" class="badge" aria-label="agent">Agent</span>
+        <button id="agent-logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <div class="agent-shell">
+      <aside id="agent-sidebar" class="agent-sidebar" aria-label="Agent menu">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Menu</div>
+          <button id="menu-close" class="icon-btn" type="button" aria-label="Close menu">
+            <span class="icon-close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link active" href="#overview" data-nav="overview">Overview</a>
+          <a class="sidebar-link" href="#sell" data-nav="sell">Sell phones</a>
+          <a class="sidebar-link" href="#history" data-nav="history">Sales history</a>
+          <a class="sidebar-link" href="#inventory" data-nav="inventory">Inventory (view)</a>
+        </nav>
+        <div class="sidebar-foot muted">
+          Agents sell phones. Inventory is managed by Branch.
+          <div style="margin-top: 10px;">
+            <a class="btn" href="Branch.html">Open Branch Portal</a>
+          </div>
+        </div>
+      </aside>
+      <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true"></div>
+
+      <main class="layout">
+        <section class="panel" id="overview" data-section="overview">
+          <div class="panel-header">
+            <h2>Realtime Overview</h2>
+            <div class="panel-actions">
+              <span id="agent-indicator" class="pill">Live</span>
+              <button id="agent-sync-btn" class="btn" type="button">Sync</button>
+            </div>
+          </div>
+
+          <div class="kpis">
+            <article class="kpi">
+              <div class="kpi-label">Phones in stock</div>
+              <div id="a-kpi-stock" class="kpi-value">0</div>
+              <div class="kpi-foot muted">This branch</div>
+            </article>
+
+            <article class="kpi">
+              <div class="kpi-label">Phones sold</div>
+              <div id="a-kpi-sold" class="kpi-value">0</div>
+              <div class="kpi-foot muted">This branch</div>
+            </article>
+
+            <article class="kpi">
+              <div class="kpi-label">Transactions</div>
+              <div id="a-kpi-tx" class="kpi-value">0</div>
+              <div class="kpi-foot muted">All time</div>
+            </article>
+
+            <article class="kpi">
+              <div class="kpi-label">Top model</div>
+              <div id="a-kpi-top" class="kpi-value">—</div>
+              <div class="kpi-foot muted">Highest sold</div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="sell" data-section="sell">
+          <div class="panel-header">
+            <h2>Complete Transaction</h2>
+            <div class="panel-actions muted">Agent-only sales</div>
+          </div>
+
+          <div class="agent-form">
+            <label class="field">
+              <span>Serial number</span>
+              <input id="tx-serial" type="text" list="serial-list" placeholder="Start typing serial..." />
+              <datalist id="serial-list"></datalist>
+            </label>
+
+            <label class="field">
+              <span>Customer phone</span>
+              <input id="tx-customer-phone" type="tel" inputmode="tel" placeholder="e.g. 07XXXXXXXX" />
+            </label>
+
+            <label class="field">
+              <span>Channel</span>
+              <select id="tx-channel">
+                <option value="mpesa">M-Pesa</option>
+                <option value="bank">Bank</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Reference</span>
+              <input id="tx-ref" type="text" placeholder="Auto-generated if blank" />
+            </label>
+
+            <label class="field">
+              <span>Amount (KES)</span>
+              <input id="tx-amount" type="number" min="0" step="1" placeholder="Auto from phone price" />
+            </label>
+
+            <div class="report-buttons" style="justify-content:flex-start;">
+              <button id="tx-add-btn" class="btn primary" type="button">Complete sale</button>
+              <button id="tx-export-btn" class="btn" type="button">Export CSV</button>
+            </div>
+          </div>
+
+          <p id="tx-helper" class="muted" style="padding: 0 18px 12px; margin: 0;"></p>
+          <p id="tx-sms" class="muted" style="padding: 0 18px 12px; margin: 0;"></p>
+        </section>
+
+        <section class="panel" id="history" data-section="history">
+          <div class="panel-header">
+            <h2>Sales History</h2>
+            <div class="panel-actions muted">Latest transactions</div>
+          </div>
+
+          <div class="table-wrap" role="region" aria-label="Sales history list" tabindex="0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Model</th>
+                  <th>Serial</th>
+                  <th>Customer</th>
+                  <th>Channel</th>
+                  <th>Reference</th>
+                  <th class="num">Amount (KES)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="tx-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="inventory" data-section="inventory">
+          <div class="panel-header">
+            <h2>Inventory (View)</h2>
+            <div class="panel-actions muted">Available phones</div>
+          </div>
+
+          <div class="table-wrap" role="region" aria-label="Branch phones list" tabindex="0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Serial</th>
+                  <th>Model</th>
+                  <th>Color</th>
+                  <th>Storage</th>
+                  <th class="num">Price (KES)</th>
+                </tr>
+              </thead>
+              <tbody id="inv-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="agent.js"></script>
+  </body>
+</html>

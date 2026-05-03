@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Branch Login • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="branch-login.css" />
+  </head>
+  <body data-page="branch-login">
+    <main class="auth-shell">
+      <section class="auth-card" aria-label="Branch login">
+        <header class="auth-header">
+          <h1>Jixels Technologies</h1>
+          <p class="muted">Branch portal (ERP)</p>
+        </header>
+
+        <form id="branch-login-form" class="auth-form" autocomplete="off">
+          <label class="field">
+            <span>Email or Username</span>
+            <input
+              id="identifier"
+              name="identifier"
+              type="text"
+              inputmode="text"
+              placeholder="e.g. yourname@gmail.com or branchuser"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+          </label>
+
+          <button id="branch-login-btn" class="btn primary" type="submit">
+            Login
+          </button>
+
+          <label class="remember-row">
+            <input id="rememberMe" type="checkbox" />
+            <span class="muted">Remember me</span>
+          </label>
+
+          <p
+            id="branch-login-error"
+            class="form-error"
+            role="alert"
+            aria-live="polite"
+          ></p>
+
+          <p class="muted" style="margin: 0; font-size: 13px;">
+            Don’t have a branch account?
+            <a href="branch-register.html" style="text-decoration: underline;"
+              >Create account</a
+            >
+          </p>
+        </form>
+
+        <footer class="auth-footer muted">
+          Branch accounts manage inventory and view completed sales. Agents complete sales transactions.
+        </footer>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="branch-login.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HR Department • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="departments.css" />
+  </head>
+  <body data-page="departments-hr">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">HR Department</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="dept-badge" class="badge" aria-label="department">HR</span>
+        <button id="dept-logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Employee Registration</h2>
+          <div class="panel-actions">
+            <button id="hr-add" class="btn primary" type="button">Add employee</button>
+          </div>
+        </div>
+
+        <div class="branch-form">
+          <label class="field">
+            <span>Full name</span>
+            <input id="hr-name" type="text" placeholder="e.g. Brian Wekesa" />
+          </label>
+          <label class="field">
+            <span>Phone number</span>
+            <input id="hr-phone" type="text" placeholder="e.g. 0712 345 678" />
+          </label>
+          <label class="field">
+            <span>Department</span>
+            <select id="hr-dept">
+              <option value="HR">HR</option>
+              <option value="Finance">Finance</option>
+              <option value="Operations">Operations</option>
+              <option value="Sales">Sales</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Role</span>
+            <input id="hr-role" type="text" placeholder="e.g. Branch Manager" />
+          </label>
+          <label class="field">
+            <span>Branch</span>
+            <select id="hr-branch"></select>
+          </label>
+          <label class="field">
+            <span>Salary (KES)</span>
+            <input id="hr-salary" type="number" min="0" step="1" placeholder="e.g. 45000" />
+          </label>
+          <label class="field">
+            <span>Debt type (optional)</span>
+            <input id="hr-debt-type" type="text" placeholder="e.g. Loan / Advance" />
+          </label>
+          <label class="field">
+            <span>Debt amount (KES, optional)</span>
+            <input id="hr-debt-amount" type="number" min="0" step="1" placeholder="e.g. 5000" />
+          </label>
+          <div></div>
+        </div>
+      </section>
+
+      <section id="hr-employees-panel" class="panel collapsed">
+        <div class="panel-header">
+          <h2>Employees List</h2>
+          <div class="panel-actions">
+            <button id="hr-employees-toggle" class="btn" type="button" aria-expanded="false">Show</button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="table-wrap" role="region" aria-label="Employee list" tabindex="0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Branch</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Department</th>
+                  <th class="num">Salary</th>
+                  <th class="num">Debt</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="hr-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="hr-payroll-panel" class="panel collapsed">
+        <div class="panel-header">
+          <h2>Employees by Branch (Payroll)</h2>
+          <div class="panel-actions">
+            <button id="hr-payroll-toggle" class="btn" type="button" aria-expanded="false">Show</button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="branch-form">
+            <label class="field">
+              <span>Branch name or ID</span>
+              <input id="hr-branch-query" type="text" placeholder="e.g. Branch 01 or b01" />
+            </label>
+            <div class="field">
+              <span>Actions</span>
+              <div class="report-buttons" style="justify-content: flex-start;">
+                <button id="hr-view-branch" class="btn" type="button">View branch</button>
+                <button id="hr-forward-branch" class="btn primary" type="button">Forward branch</button>
+              </div>
+            </div>
+            <div class="field">
+              <span>All employees</span>
+              <div class="report-buttons" style="justify-content: flex-start;">
+                <button id="hr-view-all" class="btn" type="button">View all</button>
+                <button id="hr-forward-all" class="btn primary" type="button">Forward all</button>
+              </div>
+            </div>
+          </div>
+
+          <p id="hr-payroll-status" class="muted small-note" style="padding: 0 18px 10px; margin: 0;"></p>
+
+          <div class="table-wrap" role="region" aria-label="Payroll preview" tabindex="0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Branch</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th class="num">Salary</th>
+                  <th>Debt (type)</th>
+                  <th class="num">Debt (KES)</th>
+                  <th>Debt date/time</th>
+                  <th class="num">Pay amount (KES)</th>
+                </tr>
+              </thead>
+              <tbody id="hr-payroll-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>HR Report Center</h2>
+          <div class="panel-actions">
+            <button id="dept-report-btn" class="btn primary" type="button">Generate report</button>
+            <button id="dept-report-doc-btn" class="btn" type="button">Download Word</button>
+            <button id="dept-report-pdf-btn" class="btn" type="button">Print / PDF</button>
+          </div>
+        </div>
+
+        <div class="branch-form" style="padding-bottom: 0;">
+          <label class="field">
+            <span>Due date</span>
+            <input id="dept-report-due-date" type="date" />
+          </label>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div id="dept-report-output" class="report-output" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+  </body>
+</html>

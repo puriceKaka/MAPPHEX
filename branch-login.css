@@ -1,0 +1,21 @@
+/* Auth-page tweaks (base styles are in director.css) */
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.auth-card {
+  animation: authIn 260ms ease-out;
+}
+
+@keyframes authIn {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+

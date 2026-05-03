@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Login • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="agent-login.css" />
+  </head>
+  <body data-page="agent-login">
+    <main class="auth-shell">
+      <section class="auth-card" aria-label="Agent login">
+        <header class="auth-header">
+          <h1>Jixels Technologies</h1>
+          <p class="muted">Agent portal (Sales)</p>
+        </header>
+
+        <form id="agent-login-form" class="auth-form" autocomplete="off">
+          <label class="field">
+            <span>Email or Username</span>
+            <input
+              id="identifier"
+              name="identifier"
+              type="text"
+              inputmode="text"
+              placeholder="e.g. agent@gmail.com or agentuser"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+          </label>
+
+          <button id="agent-login-btn" class="btn primary" type="submit">
+            Login
+          </button>
+
+          <label class="remember-row">
+            <input id="rememberMe" type="checkbox" />
+            <span class="muted">Remember me</span>
+          </label>
+
+          <p id="agent-login-error" class="form-error" role="alert" aria-live="polite"></p>
+
+          <p class="muted" style="margin: 0; font-size: 13px;">
+            New Agent?
+            <a href="agent-register.html" style="text-decoration: underline;">Create account</a>
+          </p>
+        </form>
+
+        <footer class="auth-footer muted">
+          Agents sell phones and complete transactions. Branch accounts manage inventory.
+        </footer>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="agent-login.js"></script>
+</body>
+</html>

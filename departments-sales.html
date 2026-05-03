@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Department • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="departments.css" />
+  </head>
+  <body data-page="departments-sales">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">JX</div>
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Sales Department</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="dept-badge" class="badge" aria-label="department">SALES</span>
+        <button id="dept-logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Sales Snapshot</h2>
+          <div class="panel-actions muted">Company totals</div>
+        </div>
+        <div class="kpis">
+          <article class="kpi">
+            <div class="kpi-label">In stock</div>
+            <div id="dept-stock" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All branches</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Sold</div>
+            <div id="dept-sold" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All time</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Last update</div>
+            <div id="dept-updated" class="kpi-value">—</div>
+            <div class="kpi-foot muted">ERP timestamp</div>
+          </article>
+          <article class="kpi">
+            <div class="kpi-label">Notes</div>
+            <div class="kpi-value" style="font-size: 14px;">Targets ready</div>
+            <div class="kpi-foot muted">Sales</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="dept-inventory-panel">
+        <div class="panel-header">
+          <h2>Inventory by Branch</h2>
+          <div class="panel-actions">
+            <label class="inline-field">
+              <span class="muted">Search</span>
+              <input id="dept-branch-search" type="search" placeholder="e.g. Branch 01" />
+            </label>
+          </div>
+        </div>
+        <div class="table-wrap" role="region" aria-label="Inventory by branch table" tabindex="0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Branch</th>
+                <th class="num">Models</th>
+                <th class="num">In stock</th>
+                <th class="num">Sold</th>
+                <th class="num">Damaged</th>
+                <th class="num">Lost</th>
+                <th>Top model</th>
+              </tr>
+            </thead>
+            <tbody id="dept-branches-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Sales Report Center</h2>
+          <div class="panel-actions">
+            <button id="dept-report-btn" class="btn primary" type="button">Generate report</button>
+            <button id="dept-report-doc-btn" class="btn" type="button">Download Word</button>
+            <button id="dept-report-pdf-btn" class="btn" type="button">Print / PDF</button>
+          </div>
+        </div>
+
+        <div class="branch-form" style="padding-bottom: 0;">
+          <label class="field">
+            <span>Due date</span>
+            <input id="dept-report-due-date" type="date" />
+          </label>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div id="dept-report-output" class="report-output" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+  </body>
+</html>

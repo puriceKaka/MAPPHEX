@@ -1,0 +1,187 @@
+/* Department portal UI extensions for director.css */
+
+.portal-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: calc(100vh - 72px);
+}
+
+.portal-sidebar {
+  position: sticky;
+  top: 72px;
+  height: calc(100vh - 72px);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  padding: 14px 12px;
+  overflow: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 6px 10px;
+}
+
+.sidebar-title {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 8px;
+  padding: 6px;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.sidebar-link.active {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(124, 58, 237, 0.22);
+}
+
+.sidebar-foot {
+  padding: 10px 8px 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.icon-btn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  height: 36px;
+  width: 42px;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.icon-hamburger,
+.icon-close {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-hamburger {
+  width: 18px;
+  height: 12px;
+}
+
+.icon-hamburger::before,
+.icon-hamburger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.icon-hamburger::before {
+  top: 0;
+}
+
+.icon-hamburger::after {
+  bottom: 0;
+}
+
+.icon-hamburger {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 45%,
+    rgba(255, 255, 255, 0.9) 45%,
+    rgba(255, 255, 255, 0.9) 55%,
+    transparent 55%,
+    transparent 100%
+  );
+  border-radius: 999px;
+}
+
+.icon-close {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-close::before,
+.icon-close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  transform-origin: center;
+}
+
+.icon-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.icon-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.menu-backdrop {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .portal-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portal-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: min(320px, 88vw);
+    transform: translateX(-110%);
+    transition: transform 160ms ease;
+    z-index: 40;
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 35;
+    display: none;
+  }
+
+  body.menu-open .menu-backdrop {
+    display: block;
+  }
+
+  body.menu-open .portal-sidebar {
+    transform: translateX(0);
+  }
+}
+

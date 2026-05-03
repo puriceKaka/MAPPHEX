@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Departments Register • Jixels Technologies</title>
+    <link rel="stylesheet" href="director.css" />
+    <link rel="stylesheet" href="departments.css" />
+  </head>
+  <body data-page="departments-register">
+    <main class="auth-shell">
+      <section class="auth-card" aria-label="Departments registration">
+        <header class="auth-header">
+          <h1>Jixels Technologies</h1>
+          <p class="muted">Create Departments Account</p>
+        </header>
+
+        <form id="dept-register-form" class="auth-form" autocomplete="off">
+          <label class="field">
+            <span>Department</span>
+            <select id="reg-role" required>
+              <option value="hr">HR</option>
+              <option value="finance">Finance</option>
+              <option value="operations">Operations</option>
+              <option value="sales">Sales</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Username</span>
+            <input id="reg-username" type="text" placeholder="e.g. hr" required />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input id="reg-password" type="password" placeholder="Create password" minlength="6" required />
+          </label>
+
+          <label class="field">
+            <span>Confirm password</span>
+            <input id="reg-password2" type="password" placeholder="Re-enter password" minlength="6" required />
+          </label>
+
+          <button class="btn primary" type="submit">Register</button>
+
+          <p id="dept-register-error" class="form-error" role="alert" aria-live="polite"></p>
+
+          <p class="muted" style="margin: 0; font-size: 13px;">
+            Already have an account?
+            <a href="departments.html" style="text-decoration: underline;">Login</a>
+          </p>
+
+        </form>
+
+        <footer class="auth-footer muted"></footer>
+      </section>
+    </main>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+  </body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Director Dashboard • Jixels Technologies</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="images/jixels-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="director.css">
+    <link rel="stylesheet" href="departments.css">
+</head>
+<body data-page="director-dashboard">
+    <header class="topbar">
+      <div class="brand">
+        <button id="menu-toggle" class="icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="icon-hamburger" aria-hidden="true"></span>
+        </button>
+        <img class="logo-img" src="images/jixels-logo.svg" alt="" />
+        <div>
+          <div class="brand-title">Jixels Technologies</div>
+          <div class="brand-subtitle muted">Director ERP Dashboard</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="session-badge" class="badge" aria-label="session status">Director</span>
+        <button id="logout-btn" class="btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <div class="portal-shell">
+      <aside id="portal-sidebar" class="portal-sidebar" aria-label="Director menu">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Director</div>
+          <button id="menu-close" class="icon-btn" type="button" aria-label="Close menu">
+            <span class="icon-close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link active" href="Director.html">Dashboard</a>
+          <a class="sidebar-link" href="Director.html#overview">Overview</a>
+          <a class="sidebar-link" href="Director.html#inventory-panel">Inventory by Branch</a>
+          <a class="sidebar-link" href="Director.html#report-center">Report Center</a>
+          <a class="sidebar-link" href="Director.html#report-output">Reports</a>
+          <a class="sidebar-link" href="departments.html">Departments Portal</a>
+          <a class="sidebar-link" href="branch-login.html">Branch Portal</a>
+          <a class="sidebar-link" href="agent-login.html">Agent Portal</a>
+        </nav>
+        <div class="sidebar-foot muted">
+          Director can view all modules.
+        </div>
+      </aside>
+      <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true"></div>
+
+      <main class="layout">
+      <section class="panel" id="overview">
+        <div class="panel-header">
+          <h2>Realtime Overview</h2>
+          <div class="panel-actions">
+            <span id="realtime-indicator" class="pill">Live</span>
+            <button id="sync-btn" class="btn" type="button">Sync</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <article class="kpi">
+            <div class="kpi-label">Branches</div>
+            <div id="kpi-branches" class="kpi-value">47</div>
+            <div class="kpi-foot muted">Across Kenya</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-label">Phones in stock</div>
+            <div id="kpi-stock" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All branches</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-label">Phones sold</div>
+            <div id="kpi-sold" class="kpi-value">0</div>
+            <div class="kpi-foot muted">All time</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-label">Employees</div>
+            <div id="kpi-employees" class="kpi-value">0</div>
+            <div class="kpi-foot muted">HR snapshot</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="inventory-panel">
+        <div class="panel-header">
+          <h2>Inventory by Branch</h2>
+          <div class="panel-actions">
+            <button id="branches-toggle-btn" class="btn" type="button">Show branches</button>
+            <label class="inline-field">
+              <span class="muted">Search</span>
+              <input id="branch-search" type="search" placeholder="e.g. Branch 01" />
+            </label>
+          </div>
+        </div>
+        <div class="table-wrap" role="region" aria-label="Inventory table" tabindex="0">
+          <table class="table" id="branches-table">
+            <thead>
+              <tr>
+                <th>Branch</th>
+                <th class="num">Models</th>
+                <th class="num">In stock</th>
+                <th class="num">Sold</th>
+                <th class="num">Damaged</th>
+                <th class="num">Lost</th>
+                <th>Top model</th>
+              </tr>
+            </thead>
+            <tbody id="branches-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="report-center">
+        <div class="panel-header">
+          <h2>Report Center</h2>
+          <div class="panel-actions">
+            <button
+              id="reports-toggle-btn"
+              class="btn primary"
+              type="button"
+              aria-expanded="false"
+            >
+              Reports
+            </button>
+            <button id="director-charts-btn" class="btn" type="button">Live charts</button>
+          </div>
+        </div>
+
+        <div id="reports-drawer" class="reports-drawer" hidden>
+          <div class="reports-drawer-grid">
+            <div class="reports-drawer-section">
+              <div class="reports-drawer-title">Company reports</div>
+              <div class="reports-drawer-actions">
+                <button id="general-report-btn" class="btn primary" type="button">General report</button>
+                <button id="weekly-report-btn" class="btn" type="button">Weekly report</button>
+                <button id="monthly-report-btn" class="btn" type="button">Monthly report</button>
+                <button id="yearly-report-btn" class="btn" type="button">Yearly report</button>
+              </div>
+            </div>
+
+            <div class="reports-drawer-section">
+              <div class="reports-drawer-title">Download current report</div>
+              <div class="reports-drawer-actions">
+                <button id="general-report-csv-btn" class="btn" type="button">Download CSV</button>
+                <button id="general-report-doc-btn" class="btn" type="button">Download Word</button>
+                <button id="general-report-pdf-btn" class="btn" type="button">Print / PDF</button>
+              </div>
+            </div>
+
+            <div class="reports-drawer-section">
+              <div class="reports-drawer-title">Branch report (selected)</div>
+              <div class="reports-drawer-actions">
+                <button id="branch-report-btn" class="btn" type="button">View</button>
+                <button id="branch-report-csv-btn" class="btn" type="button">Download CSV</button>
+                <button id="branch-report-doc-btn" class="btn" type="button">Download Word</button>
+                <button id="branch-report-pdf-btn" class="btn" type="button">Print / PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-form" style="padding-bottom: 0;">
+          <label class="field">
+            <span>Due date</span>
+            <input id="director-report-due-date" type="date" />
+          </label>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div class="report-controls">
+          <label class="field">
+            <span>Single branch report</span>
+            <select id="branch-select"></select>
+          </label>
+          <div class="report-buttons">
+            <span class="muted" style="font-size: 12px;">
+              Use the <strong>Reports</strong> button above to view/download reports.
+            </span>
+          </div>
+        </div>
+
+        <div id="report-output" class="report-output" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" id="director-charts-panel" style="display:none;">
+        <div class="panel-header">
+          <h2>Live Charts (Company)</h2>
+          <div class="panel-actions">
+            <button id="director-charts-close-btn" class="btn" type="button">Close</button>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">Top branches by sales</div>
+            <canvas id="director-chart-sold" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">Top branches by stock</div>
+            <canvas id="director-chart-stock" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">Damaged vs Lost (total qty)</div>
+            <canvas id="director-chart-dl" height="220"></canvas>
+          </div>
+        </div>
+        <p class="muted small-note" style="padding: 0 18px 18px;">
+          These charts are prepared for later connection to the e-commerce/CRM live data feed.
+        </p>
+      </section>
+
+      <section class="panel" id="departments">
+        <div class="panel-header">
+          <h2>Departments</h2>
+          <div class="panel-actions muted">Director can access all departments</div>
+        </div>
+        <div class="dept-grid">
+          <a class="dept-card" href="hr.html" data-dept="hr">
+            <div class="dept-title">HR</div>
+            <div class="muted">Headcount, hiring, attendance</div>
+          </a>
+          <a class="dept-card" href="finance.html" data-dept="finance">
+            <div class="dept-title">Finance</div>
+            <div class="muted">Revenue, expenses, profit</div>
+          </a>
+          <a class="dept-card" href="operations.html" data-dept="operations">
+            <div class="dept-title">Operations</div>
+            <div class="muted">Stock movement, logistics</div>
+          </a>
+          <a class="dept-card" href="sales.html" data-dept="sales">
+            <div class="dept-title">Sales</div>
+            <div class="muted">Sales velocity, targets</div>
+          </a>
+        </div>
+        <p class="muted small-note" style="padding: 0 18px 6px; margin: 0;">
+          Open full department portals (Director access enabled):
+        </p>
+        <div class="report-buttons" style="padding: 0 18px 18px; justify-content: flex-start;">
+          <a class="btn" href="departments-hr.html">HR Portal</a>
+          <a class="btn" href="departments-finance.html">Finance Portal</a>
+          <a class="btn" href="departments-operations.html">Operations Portal</a>
+          <a class="btn" href="departments-sales.html">Sales Portal</a>
+          <a class="btn" href="departments-admin.html">Admin Portal</a>
+          <a class="btn" href="departments.html">Departments login</a>
+          <a class="btn" href="branch-login.html">Branch portal</a>
+        </div>
+      </section>
+      </main>
+    </div>
+
+    <script src="kv-client.js"></script>
+    <script src="jixels-store.js"></script>
+    <script src="departments.js"></script>
+    <script src="ui-menu.js"></script>
+    <script src="director.js"></script>
+    <script src="pwa.js"></script>
+</body>
+</html>
