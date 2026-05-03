@@ -881,11 +881,20 @@
 
     const generate = () => {
       const dueDate = String(dueDateInput?.value || "").trim();
-      const html = String(buildHtml({ dueDate }) || "");
-      lastHtml = html;
-      reportOut.innerHTML = html || "<p>No data.</p>";
-      audit("report_generated", { title: String(title || "Report"), dueDate });
-      return html;
+      try {
+        const html = expandDetailsForExport(String(buildHtml({ dueDate }) || ""));
+        lastHtml = html;
+        reportOut.innerHTML = html || "<p>No data.</p>";
+        audit("report_generated", { title: String(title || "Report"), dueDate });
+        return html;
+      } catch (err) {
+        const msg = String(err?.message || err || "Report generation failed.");
+        const html = `<h3>${escapeHtml(title || "Report")}</h3><p>Report could not be generated: ${escapeHtml(msg)}</p>`;
+        lastHtml = html;
+        reportOut.innerHTML = html;
+        audit("report_failed", { title: String(title || "Report"), dueDate, error: msg });
+        return html;
+      }
     };
 
     const ensureHtml = () => lastHtml || generate();
@@ -910,6 +919,7 @@
       }));
     }
 
+    generate();
     return { generate, refreshIfGenerated };
   };
 
@@ -1541,7 +1551,6 @@
       const recentRowsHtml = active
         .slice()
         .reverse()
-        .slice(0, 60)
         .map(
           (e) => `
           <tr>
@@ -1589,7 +1598,7 @@
           </div>
         </div>
 
-        <details class="report-details" style="margin-top: 14px;">
+        <details class="report-details" open style="margin-top: 14px;">
           <summary class="report-summary">
             <span>Employees by Branch</span>
             <span class="btn">Show / Hide</span>
@@ -1609,7 +1618,7 @@
           </table>
         </details>
 
-        <details class="report-details" style="margin-top: 12px;">
+        <details class="report-details" open style="margin-top: 12px;">
           <summary class="report-summary">
             <span>Recent Employees</span>
             <span class="btn">Show / Hide</span>
@@ -2089,7 +2098,6 @@
       const payrollRowsHtml = queue
         .slice()
         .reverse()
-        .slice(0, 80)
         .map((item) => {
           const branchName = String(item.branchName || item.branchId || "—");
           const amt = toMoney(item?.payAmount ?? item?.amount, 0);
@@ -2141,7 +2149,7 @@
           </div>
         </div>
 
-        <details class="report-details" style="margin-top: 14px;">
+        <details class="report-details" open style="margin-top: 14px;">
           <summary class="report-summary">
             <span>Branch Finance Summary</span>
             <span class="btn">Show / Hide</span>
