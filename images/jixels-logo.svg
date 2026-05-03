@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Jixels Technologies">
-  <rect width="128" height="128" rx="26" fill="#0b1020"/>
-  <path d="M24 30h80v68H24z" fill="#111a2f" stroke="#22d3ee" stroke-width="4"/>
-  <path d="M38 44h23v11H50v29c0 10-6 17-17 17-4 0-8-1-11-3l4-10c2 1 4 2 7 2 5 0 7-3 7-8V55H38z" fill="#e5f7ff"/>
-  <path d="M68 44h14l9 16 9-16h14L99 68l16 30h-14L91 80 80 98H66l17-30z" fill="#facc15"/>
-  <circle cx="25" cy="25" r="6" fill="#34d399"/>
-  <circle cx="103" cy="103" r="6" fill="#ef4444"/>
-</svg>

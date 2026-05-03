@@ -168,10 +168,12 @@ code {
 }
 
 .logo-img {
-  width: 42px;
+  width: 56px;
   height: 42px;
-  border-radius: 12px;
+  object-fit: contain;
+  border-radius: 10px;
   display: block;
+  background: rgba(255, 255, 255, 0.06);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
 }
 

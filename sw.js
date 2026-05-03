@@ -9,7 +9,9 @@ const APP_SHELL = [
   "./kv-client.js",
   "./jixels-store.js",
   "./ui-menu.js",
-  "./images/jixels-logo.svg",
+  "./images/jixels-logo.png",
+  "./images/jixels-icon-192.png",
+  "./images/jixels-icon-512.png",
   "./manifest.webmanifest"
 ];
 
