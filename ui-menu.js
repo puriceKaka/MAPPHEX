@@ -17,10 +17,17 @@
     if (toggle) toggle.addEventListener("click", () => setMenuOpen(true));
     if (close) close.addEventListener("click", () => setMenuOpen(false));
     if (backdrop) backdrop.addEventListener("click", () => setMenuOpen(false));
+    document.addEventListener("click", (e) => {
+      const link = e.target?.closest?.(".sidebar-link");
+      if (!link || window.innerWidth > 980) return;
+      setMenuOpen(false);
+    });
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") setMenuOpen(false);
     });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) setMenuOpen(false);
+    });
   });
 })();
-

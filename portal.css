@@ -77,6 +77,10 @@
   background: rgba(255, 255, 255, 0.10);
 }
 
+.brand > .icon-btn {
+  display: none;
+}
+
 .icon-hamburger,
 .icon-close {
   position: relative;
@@ -150,6 +154,10 @@
   display: none;
 }
 
+body.menu-open {
+  overflow: hidden;
+}
+
 @media (max-width: 980px) {
   .portal-shell {
     grid-template-columns: minmax(0, 1fr);
@@ -159,8 +167,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
-    width: min(320px, 88vw);
+    height: 100dvh;
+    width: min(320px, calc(100vw - 28px));
     transform: translateX(-110%);
     transition: transform 160ms ease;
     z-index: 40;
@@ -183,5 +191,21 @@
   body.menu-open .portal-sidebar {
     transform: translateX(0);
   }
+
+  .brand > .icon-btn {
+    display: inline-grid;
+    flex: 0 0 42px;
+  }
 }
 
+@media (max-width: 520px) {
+  body[data-page="director-dashboard"] .topbar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  body[data-page="director-dashboard"] .topbar-actions {
+    width: auto;
+    margin-left: auto;
+  }
+}

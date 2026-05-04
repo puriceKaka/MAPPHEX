@@ -1703,6 +1703,9 @@
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") setMenuOpen(false);
     });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) setMenuOpen(false);
+    });
     if (sidebar) {
       sidebar.addEventListener("click", (e) => {
         const a = e.target?.closest?.("[data-nav]");
