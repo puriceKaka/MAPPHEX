@@ -46,10 +46,10 @@
         display: none;
       }
       body:has(.pwa-install-btn:not([hidden])) {
-        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
       }
       body.has-pwa-install {
-        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
       }
       .pwa-install-btn.is-muted {
         background: rgba(10, 12, 22, 0.88);
@@ -58,7 +58,7 @@
       @media (max-width: 520px) {
         .pwa-install-btn {
           left: 10px;
-          bottom: 12px;
+          bottom: calc(56px + env(safe-area-inset-bottom, 0px));
           min-width: 118px;
           min-height: 40px;
           padding: 9px 12px;

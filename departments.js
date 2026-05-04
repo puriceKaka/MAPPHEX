@@ -2915,7 +2915,7 @@
         actions.className = "report-buttons";
         actions.style.justifyContent = "flex-start";
 
-        if (row.key !== DIRECTOR_ACCOUNT_KEY && status !== "approved") {
+        if (row.key !== DIRECTOR_ACCOUNT_KEY && (status === "pending" || status === "rejected")) {
           const approve = document.createElement("button");
           approve.className = "btn primary";
           approve.type = "button";
@@ -2924,13 +2924,20 @@
           actions.appendChild(approve);
         }
 
-        if (row.key !== DIRECTOR_ACCOUNT_KEY && status !== "rejected") {
+        if (row.key !== DIRECTOR_ACCOUNT_KEY && status === "pending") {
           const reject = document.createElement("button");
           reject.className = "btn";
           reject.type = "button";
           reject.textContent = "Reject";
           reject.addEventListener("click", () => updateAccountStatus(row.key, a.id, "rejected"));
           actions.appendChild(reject);
+        }
+
+        if (row.key !== DIRECTOR_ACCOUNT_KEY && status === "approved") {
+          const done = document.createElement("span");
+          done.className = "badge";
+          done.textContent = "Approved";
+          actions.appendChild(done);
         }
 
         const del = document.createElement("button");
