@@ -382,6 +382,34 @@
     };
   };
 
+  const isAssetWisePhone = (phone) => {
+    const source = String(phone?.source || "").trim().toLowerCase();
+    const syncedFrom = String(phone?.syncedFrom || "").trim().toLowerCase();
+    return source === "asset-management" || syncedFrom === "assetwise";
+  };
+
+  const computeAssetWiseAllocations = (branch, range = null) => {
+    const phones = Array.isArray(branch?.phones) ? branch.phones : [];
+    const soldPhones = Array.isArray(branch?.soldPhones) ? branch.soldPhones : [];
+    let allocated = 0;
+    let inStock = 0;
+    let sold = 0;
+
+    for (const phone of [...phones, ...soldPhones]) {
+      if (!isAssetWisePhone(phone)) continue;
+      if (range) {
+        const at = phone.assignedAt || phone.createdAt || phone.soldAt || "";
+        const ms = new Date(at).getTime();
+        if (!Number.isFinite(ms) || ms < range.startMs || ms > range.endMs) continue;
+      }
+      allocated += 1;
+      if (String(phone.status || "in_stock") === "sold") sold += 1;
+      else inStock += 1;
+    }
+
+    return { allocated, inStock, sold };
+  };
+
   const getFinanceSummary = (branch) => {
     const fs = branch?.financeSummary;
     if (!fs || typeof fs !== "object") {
@@ -405,9 +433,13 @@
     let mpesaIn = 0;
     let bankIn = 0;
     let txCount = 0;
+    let assetWiseAllocated = 0;
+    let assetWiseStock = 0;
+    let assetWiseSold = 0;
 
     for (const b of branches) {
       const t = computeBranchTotals(b);
+      const aw = computeAssetWiseAllocations(b);
       totalStock += t.stock;
       totalSold += t.sold;
       employees += Number(b.employees || 0);
@@ -417,9 +449,12 @@
       mpesaIn += fin.mpesaIn;
       bankIn += fin.bankIn;
       txCount += fin.txCount;
+      assetWiseAllocated += aw.allocated;
+      assetWiseStock += aw.inStock;
+      assetWiseSold += aw.sold;
     }
 
-    return { totalStock, totalSold, employees, damaged, lost, mpesaIn, bankIn, txCount };
+    return { totalStock, totalSold, employees, damaged, lost, mpesaIn, bankIn, txCount, assetWiseAllocated, assetWiseStock, assetWiseSold };
   };
 
   const mutateRealtime = (data) => {
@@ -1040,8 +1075,9 @@
       const rows = branches.map((b) => {
         const t = computeBranchTotals(b);
         const p = computeBranchPeriodTotals(b, range);
+        const aw = computeAssetWiseAllocations(b, range);
         const revenue = p.mpesaIn + p.bankIn;
-        return { b, t, p, revenue };
+        return { b, t, p, aw, revenue };
       });
 
       const totals = rows.reduce(
@@ -1055,6 +1091,8 @@
           acc.txCount += row.p.txCount;
           acc.creditCount += row.p.creditCount;
           acc.creditBalance += row.p.creditBalance;
+          acc.assetWiseAllocated += row.aw.allocated;
+          acc.assetWiseStock += row.aw.inStock;
           acc.employees += Number(row.b.employees || 0);
           return acc;
         },
@@ -1068,6 +1106,8 @@
           txCount: 0,
           creditCount: 0,
           creditBalance: 0,
+          assetWiseAllocated: 0,
+          assetWiseStock: 0,
           employees: 0,
         },
       );
@@ -1124,6 +1164,7 @@
               <td class="num">${formatInt(row.p.bankIn)}</td>
               <td class="num">${formatInt(row.p.creditCount)}</td>
               <td class="num">${formatInt(row.p.creditBalance)}</td>
+              <td class="num">${formatInt(row.aw.allocated)}</td>
               <td class="num">${formatInt(row.p.damaged)}</td>
               <td class="num">${formatInt(row.p.lost)}</td>
               <td>${row.p.topModel || "—"}</td>
@@ -1194,6 +1235,14 @@
             <div class="value">${formatInt(totals.creditBalance)}</div>
           </div>
           <div class="report-card">
+            <div class="label">AssetWise allocated</div>
+            <div class="value">${formatInt(totals.assetWiseAllocated)}</div>
+          </div>
+          <div class="report-card">
+            <div class="label">AssetWise stock</div>
+            <div class="value">${formatInt(totals.assetWiseStock)}</div>
+          </div>
+          <div class="report-card">
             <div class="label">Employees (snapshot)</div>
             <div class="value">${formatInt(totals.employees)}</div>
           </div>
@@ -1215,6 +1264,7 @@
                 <th class="num">Bank</th>
                 <th class="num">Credit phones</th>
                 <th class="num">Credit balance</th>
+                <th class="num">AssetWise allocated</th>
                 <th class="num">Damaged</th>
                 <th class="num">Lost</th>
                 <th>Top model</th>
@@ -1251,6 +1301,7 @@
           "BankInKES",
           "CreditPhones",
           "CreditBalanceKES",
+          "AssetWiseAllocated",
           "Damaged",
           "Lost",
           "TopModel",
@@ -1260,6 +1311,7 @@
       for (const b of data.branches || []) {
         const t = computeBranchTotals(b);
         const p = computeBranchPeriodTotals(b, range);
+        const aw = computeAssetWiseAllocations(b, range);
         rows.push([
           b.id,
           b.name,
@@ -1273,6 +1325,7 @@
           p.bankIn,
           p.creditCount,
           p.creditBalance,
+          aw.allocated,
           p.damaged,
           p.lost,
           p.topModel,
@@ -1287,7 +1340,7 @@
     const makeGeneralBranchesTableRows = () => {
       const branches = Array.isArray(data.branches) ? data.branches : [];
       return branches
-        .map((b) => ({ b, t: computeBranchTotals(b) }))
+        .map((b) => ({ b, t: computeBranchTotals(b), aw: computeAssetWiseAllocations(b) }))
         .sort((a, z) => z.t.sold - a.t.sold)
         .map(
           (row) => `
@@ -1296,6 +1349,7 @@
               <td class="num">${formatInt(row.t.models)}</td>
               <td class="num">${formatInt(row.t.stock)}</td>
               <td class="num">${formatInt(row.t.sold)}</td>
+              <td class="num">${formatInt(row.aw.allocated)}</td>
               <td class="num">${formatInt(row.t.damaged)}</td>
               <td class="num">${formatInt(row.t.lost)}</td>
               <td>${row.t.topModel}</td>
@@ -1361,6 +1415,14 @@
             <div class="value">${formatInt(totals.totalSold)}</div>
           </div>
           <div class="report-card">
+            <div class="label">AssetWise allocated</div>
+            <div class="value">${formatInt(totals.assetWiseAllocated)}</div>
+          </div>
+          <div class="report-card">
+            <div class="label">AssetWise in stock</div>
+            <div class="value">${formatInt(totals.assetWiseStock)}</div>
+          </div>
+          <div class="report-card">
             <div class="label">Damaged</div>
             <div class="value">${formatInt(totals.damaged)}</div>
           </div>
@@ -1398,6 +1460,7 @@
                 <th class="num">Models</th>
                 <th class="num">Stock</th>
                 <th class="num">Sold</th>
+                <th class="num">AssetWise allocated</th>
                 <th class="num">Damaged</th>
                 <th class="num">Lost</th>
                 <th>Top model</th>
@@ -1423,6 +1486,9 @@
           "Models",
           "Stock",
           "Sold",
+          "AssetWiseAllocated",
+          "AssetWiseInStock",
+          "AssetWiseSold",
           "Damaged",
           "Lost",
           "MpesaInKES",
@@ -1434,6 +1500,7 @@
 
       for (const b of data.branches || []) {
         const t = computeBranchTotals(b);
+        const aw = computeAssetWiseAllocations(b);
         const fin = getFinanceSummary(b);
         rows.push([
           b.id,
@@ -1442,6 +1509,9 @@
           t.models,
           t.stock,
           t.sold,
+          aw.allocated,
+          aw.inStock,
+          aw.sold,
           t.damaged,
           t.lost,
           fin.mpesaIn,
@@ -1502,6 +1572,7 @@
       }
 
       const totals = computeBranchTotals(branch);
+      const assetWise = computeAssetWiseAllocations(branch);
       const fin = getFinanceSummary(branch);
       const updated = branch.updatedAt ? new Date(branch.updatedAt) : new Date();
       const generatedAt = new Date();
@@ -1542,6 +1613,14 @@
           <div class="report-card">
             <div class="label">Sold</div>
             <div class="value">${formatInt(totals.sold)}</div>
+          </div>
+          <div class="report-card">
+            <div class="label">AssetWise allocated</div>
+            <div class="value">${formatInt(assetWise.allocated)}</div>
+          </div>
+          <div class="report-card">
+            <div class="label">AssetWise in stock</div>
+            <div class="value">${formatInt(assetWise.inStock)}</div>
           </div>
           <div class="report-card">
             <div class="label">Damaged</div>
@@ -1800,10 +1879,15 @@
       const branch = getBranchById(branchId);
       if (!branch) return;
 
+      const aw = computeAssetWiseAllocations(branch);
       const rows = [["BranchId", "Branch", "Model", "Stock", "Sold"]];
       for (const row of branch.inventory || []) {
         rows.push([branch.id, branch.name, row.model, row.stock, row.sold]);
       }
+      rows.push([]);
+      rows.push(["AssetWiseAllocated", aw.allocated]);
+      rows.push(["AssetWiseInStock", aw.inStock]);
+      rows.push(["AssetWiseSold", aw.sold]);
 
       const csv = rows
         .map((r) => r.map(csvEscape).join(","))
