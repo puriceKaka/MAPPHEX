@@ -129,7 +129,7 @@
     const footer = document.createElement("footer");
     footer.id = "site-powered-footer";
     footer.className = "site-powered-footer";
-    footer.textContent = "Powered by C Teams Technology";
+    footer.textContent = "Powered by © Teams Technology";
     document.body.appendChild(footer);
   };
 
