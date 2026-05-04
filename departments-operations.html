@@ -70,17 +70,8 @@
           </div>
         </div>
         <p class="muted small-note" style="padding: 0 18px 18px; margin: 0;">
-          When AssetWise allocates phones to a branch, send those allocated phones to <code>/api/assets/sync</code>
-          so they appear in that branch stock automatically.
+          Allocated phones from AssetWise appear automatically in the matching branch stock after AssetWise sends the allocation update.
         </p>
-        <div class="branch-form" style="padding-top: 0;">
-          <label class="field" style="grid-column: 1 / -1;">
-            <span>AssetWise allocated phones JSON</span>
-            <textarea id="asset-sync-json" rows="6" placeholder='{"allocations":[{"branchId":"b01","model":"Samsung Galaxy S Series","serial":"SN001","storage":"128GB","color":"Black","price":25000,"source":"AssetWise"}]}'></textarea>
-          </label>
-          <button id="asset-sync-import" class="btn primary" type="button">Sync allocated phones</button>
-          <div id="asset-sync-status" class="muted small-note" aria-live="polite"></div>
-        </div>
       </section>
 
       <section class="panel" id="dept-inventory-panel">
