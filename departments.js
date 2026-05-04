@@ -2816,10 +2816,44 @@
       render();
     };
 
+    const defaultDeptAccountIds = new Set(["hr-1", "fin-1", "ops-1", "sales-1", "admin-1"]);
+
+    const accountDedupeKey = (type, account) => {
+      const a = account && typeof account === "object" ? account : {};
+      const role = normalizeRole(a.role || type);
+      const username = String(a.username || a.name || "").trim().toLowerCase();
+      const email = String(a.email || "").trim().toLowerCase();
+      const branchId = String(a.branchId || "").trim().toLowerCase();
+      if (email) return `${type}:email:${email}`;
+      if (username && branchId) return `${type}:branch-user:${branchId}:${username}`;
+      if (username && role) return `${type}:role-user:${role}:${username}`;
+      return `${type}:id:${String(a.id || "").trim()}`;
+    };
+
+    const compactAccountList = (key, type) => {
+      const raw = loadJson(key, []);
+      const rows = Array.isArray(raw) ? raw : [];
+      const seen = new Set();
+      const compacted = [];
+      for (const item of rows) {
+        if (!item || typeof item !== "object") continue;
+        const id = String(item.id || "").trim();
+        const username = String(item.username || item.name || "").trim();
+        const email = String(item.email || "").trim();
+        if (!id && !username && !email) continue;
+        const dedupeKey = accountDedupeKey(type, item);
+        if (seen.has(dedupeKey)) continue;
+        seen.add(dedupeKey);
+        compacted.push(item);
+      }
+      if (compacted.length !== rows.length) saveJson(key, compacted);
+      return compacted;
+    };
+
     const loadAccountRows = () => {
-      const branchAccounts = loadJson(BRANCH_ACCOUNTS_KEY, []);
-      const agentAccounts = loadJson(AGENT_ACCOUNTS_KEY, []);
-      const deptAccounts = loadJson(ACCOUNTS_KEY, []);
+      const branchAccounts = compactAccountList(BRANCH_ACCOUNTS_KEY, "branch");
+      const agentAccounts = compactAccountList(AGENT_ACCOUNTS_KEY, "agent");
+      const deptAccounts = compactAccountList(ACCOUNTS_KEY, "department");
       const director = loadJson(DIRECTOR_ACCOUNT_KEY, null);
       const seen = new Set();
       return [
@@ -2833,7 +2867,10 @@
         const username = String(a.username || a.name || "").trim().toLowerCase();
         const email = String(a.email || "").trim().toLowerCase();
         if (!id && !username && !email) return false;
-        const dedupeKey = `${row.type}:${id || email || username}`;
+        const status = String(a.status || "approved").toLowerCase();
+        const isSeededDefaultDept = row.type === "department" && defaultDeptAccountIds.has(id) && status === "approved";
+        if (isSeededDefaultDept) return false;
+        const dedupeKey = accountDedupeKey(row.type, a);
         if (seen.has(dedupeKey)) return false;
         seen.add(dedupeKey);
         return true;
