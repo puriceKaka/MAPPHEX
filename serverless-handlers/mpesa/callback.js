@@ -1,5 +1,5 @@
-const { sendJson, readJsonBody } = require("../_lib/http");
-const { getStore } = require("../_lib/kv-store");
+const { sendJson, readJsonBody } = require("../../api/_lib/http");
+const { getStore } = require("../../api/_lib/kv-store");
 
 const postOneSignal = async (path, payload) => {
   const appId = String(process.env.ONESIGNAL_APP_ID || "").trim();

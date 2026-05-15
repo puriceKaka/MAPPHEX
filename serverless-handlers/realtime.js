@@ -1,8 +1,8 @@
-const { sendJson, readJsonBody } = require("./_lib/http");
-const { getStore } = require("./_lib/kv-store");
-const { getTenantId } = require("./_lib/tenant");
-const { appendEvent, listEvents } = require("./_lib/events");
-const { assertObject, rateLimit, safeString } = require("./_lib/security");
+const { sendJson, readJsonBody } = require("../api/_lib/http");
+const { getStore } = require("../api/_lib/kv-store");
+const { getTenantId } = require("../api/_lib/tenant");
+const { appendEvent, listEvents } = require("../api/_lib/events");
+const { assertObject, rateLimit, safeString } = require("../api/_lib/security");
 
 module.exports = async (req, res) => {
   try {

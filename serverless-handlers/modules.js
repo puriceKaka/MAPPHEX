@@ -1,8 +1,8 @@
-const { sendJson, readJsonBody } = require("./_lib/http");
-const { getStore } = require("./_lib/kv-store");
-const { getTenantId, scopeTenantKey } = require("./_lib/tenant");
-const { assertObject, rateLimit, safeString } = require("./_lib/security");
-const { appendEvent } = require("./_lib/events");
+const { sendJson, readJsonBody } = require("../api/_lib/http");
+const { getStore } = require("../api/_lib/kv-store");
+const { getTenantId, scopeTenantKey } = require("../api/_lib/tenant");
+const { assertObject, rateLimit, safeString } = require("../api/_lib/security");
+const { appendEvent } = require("../api/_lib/events");
 
 const MODULES_KEY = "enterprise_modules_v1";
 

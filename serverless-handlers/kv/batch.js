@@ -1,9 +1,9 @@
-const { sendJson, readJsonBody } = require("../_lib/http");
-const { sanitizeKey } = require("../_lib/keys");
-const { getStore } = require("../_lib/kv-store");
-const { getTenantId, scopeTenantKey } = require("../_lib/tenant");
-const { appendEvent } = require("../_lib/events");
-const { assertIdempotent, assertObject, assertSameOrigin, rateLimit } = require("../_lib/security");
+const { sendJson, readJsonBody } = require("../../api/_lib/http");
+const { sanitizeKey } = require("../../api/_lib/keys");
+const { getStore } = require("../../api/_lib/kv-store");
+const { getTenantId, scopeTenantKey } = require("../../api/_lib/tenant");
+const { appendEvent } = require("../../api/_lib/events");
+const { assertIdempotent, assertObject, assertSameOrigin, rateLimit } = require("../../api/_lib/security");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "Method not allowed" });

@@ -1,8 +1,8 @@
-const { sendJson, readJsonBody } = require("../_lib/http");
-const { getStore } = require("../_lib/kv-store");
-const { getTenantId, scopeTenantKey } = require("../_lib/tenant");
-const { appendEvent } = require("../_lib/events");
-const { assertIdempotent, rateLimit, safeString } = require("../_lib/security");
+const { sendJson, readJsonBody } = require("../../api/_lib/http");
+const { getStore } = require("../../api/_lib/kv-store");
+const { getTenantId, scopeTenantKey } = require("../../api/_lib/tenant");
+const { appendEvent } = require("../../api/_lib/events");
+const { assertIdempotent, rateLimit, safeString } = require("../../api/_lib/security");
 
 const ERP_KEY = "enterprise_erp_v1";
 const BRANCH_COUNT = 47;

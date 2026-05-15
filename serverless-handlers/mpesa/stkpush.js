@@ -1,6 +1,6 @@
-const { sendJson, readJsonBody } = require("../_lib/http");
-const { getStore } = require("../_lib/kv-store");
-const { baseUrl, mustEnv, nowTimestamp, normalizeMsisdn, getAccessToken, stkPassword } = require("../_lib/mpesa");
+const { sendJson, readJsonBody } = require("../../api/_lib/http");
+const { getStore } = require("../../api/_lib/kv-store");
+const { baseUrl, mustEnv, nowTimestamp, normalizeMsisdn, getAccessToken, stkPassword } = require("../../api/_lib/mpesa");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "Method not allowed" });

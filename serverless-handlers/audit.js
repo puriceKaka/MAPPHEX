@@ -1,6 +1,6 @@
-const { sendJson, readJsonBody } = require("./_lib/http");
-const { getStore } = require("./_lib/kv-store");
-const { getTenantId, scopeTenantKey } = require("./_lib/tenant");
+const { sendJson, readJsonBody } = require("../api/_lib/http");
+const { getStore } = require("../api/_lib/kv-store");
+const { getTenantId, scopeTenantKey } = require("../api/_lib/tenant");
 
 const AUDIT_KEY = "enterprise_audit_v1";
 

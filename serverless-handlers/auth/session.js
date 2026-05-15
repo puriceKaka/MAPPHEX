@@ -1,8 +1,8 @@
 const crypto = require("crypto");
-const { sendJson, readJsonBody } = require("../_lib/http");
-const { getTenantId } = require("../_lib/tenant");
+const { sendJson, readJsonBody } = require("../../api/_lib/http");
+const { getTenantId } = require("../../api/_lib/tenant");
 const { verifyOrganizationAdmin } = require("../organizations");
-const { decodeSessionToken } = require("../_lib/security");
+const { decodeSessionToken } = require("../../api/_lib/security");
 
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 

@@ -1,4 +1,4 @@
-const { sendJson, readJsonBody } = require("../_lib/http");
+const { sendJson, readJsonBody } = require("../../api/_lib/http");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "Method not allowed" });
@@ -13,23 +13,25 @@ module.exports = async (req, res) => {
 
     const payload = {
       app_id: appId,
-      target_channel: body.target_channel || body.targetChannel || "push",
+      target_channel: "sms",
+      include_phone_numbers: body.include_phone_numbers || body.includePhoneNumbers,
+      include_aliases: body.include_aliases || body.includeAliases,
       included_segments: body.included_segments || body.includedSegments,
       excluded_segments: body.excluded_segments || body.excludedSegments,
-      include_aliases: body.include_aliases || body.includeAliases,
       filters: body.filters,
-      headings: body.headings,
       contents: body.contents,
-      data: body.data,
-      url: body.url,
+      sms_from: body.sms_from || body.smsFrom,
+      sms_media_urls: body.sms_media_urls || body.smsMediaUrls,
       name: body.name,
+      custom_data: body.custom_data || body.customData,
+      idempotency_key: body.idempotency_key || body.idempotencyKey,
     };
 
     if (!payload.contents || typeof payload.contents !== "object") {
       return sendJson(res, 400, { ok: false, error: "contents is required" });
     }
 
-    const r = await fetch("https://api.onesignal.com/notifications", {
+    const r = await fetch("https://api.onesignal.com/notifications?c=sms", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +40,7 @@ module.exports = async (req, res) => {
       body: JSON.stringify(payload),
     });
     const data = await r.json().catch(() => null);
-    if (!r.ok) return sendJson(res, 502, { ok: false, error: "OneSignal request failed", status: r.status, data });
+    if (!r.ok) return sendJson(res, 502, { ok: false, error: "OneSignal SMS request failed", status: r.status, data });
     return sendJson(res, 200, { ok: true, data });
   } catch (err) {
     const status = Number(err?.statusCode || 500) || 500;

@@ -1,9 +1,9 @@
 const crypto = require("crypto");
-const { sendJson, readJsonBody } = require("./_lib/http");
-const { getStore } = require("./_lib/kv-store");
-const { cleanTenantId, getTenantId, scopeTenantKey } = require("./_lib/tenant");
-const { appendEvent, listEvents } = require("./_lib/events");
-const { assertIdempotent, assertObject, assertSameOrigin, rateLimit, requireTenantSession, safeString } = require("./_lib/security");
+const { sendJson, readJsonBody } = require("../api/_lib/http");
+const { getStore } = require("../api/_lib/kv-store");
+const { cleanTenantId, getTenantId, scopeTenantKey } = require("../api/_lib/tenant");
+const { appendEvent, listEvents } = require("../api/_lib/events");
+const { assertIdempotent, assertObject, assertSameOrigin, rateLimit, requireTenantSession, safeString } = require("../api/_lib/security");
 
 const ORGS_KEY = "platform_organizations_v1";
 const USERS_KEY = "enterprise_org_users_v1";

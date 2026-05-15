@@ -311,43 +311,43 @@ const handleApi = async (req, res, url) => {
   }
 
   if (url.pathname === "/api/assets/sync") {
-    return require("../api/assets/sync")(req, res);
+    return require("../serverless-handlers/assets/sync")(req, res);
   }
 
   if (url.pathname === "/api/auth/session") {
-    return require("../api/auth/session")(req, res);
+    return require("../serverless-handlers/auth/session")(req, res);
   }
 
   if (url.pathname === "/api/tasks") {
-    return require("../api/tasks")(req, res);
+    return require("../serverless-handlers/tasks")(req, res);
   }
 
   if (url.pathname === "/api/audit") {
-    return require("../api/audit")(req, res);
+    return require("../serverless-handlers/audit")(req, res);
   }
 
   if (url.pathname === "/api/modules") {
-    return require("../api/modules")(req, res);
+    return require("../serverless-handlers/modules")(req, res);
   }
 
   if (url.pathname === "/api/organizations") {
-    return require("../api/organizations")(req, res);
+    return require("../serverless-handlers/organizations")(req, res);
   }
 
   if (url.pathname === "/api/org-admin") {
-    return require("../api/org-admin")(req, res);
+    return require("../serverless-handlers/org-admin")(req, res);
   }
 
   if (url.pathname === "/api/platform-monitoring") {
-    return require("../api/platform-monitoring")(req, res);
+    return require("../serverless-handlers/platform-monitoring")(req, res);
   }
 
   if (url.pathname === "/api/files") {
-    return require("../api/files")(req, res);
+    return require("../serverless-handlers/files")(req, res);
   }
 
   if (url.pathname === "/api/realtime") {
-    return require("../api/realtime")(req, res);
+    return require("../serverless-handlers/realtime")(req, res);
   }
 
   return notFound(res);

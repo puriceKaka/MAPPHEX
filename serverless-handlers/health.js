@@ -1,5 +1,5 @@
-const { sendJson } = require("./_lib/http");
-const { getStore } = require("./_lib/kv-store");
+const { sendJson } = require("../api/_lib/http");
+const { getStore } = require("../api/_lib/kv-store");
 
 module.exports = async (req, res) => {
   if (req.method !== "GET") return sendJson(res, 405, { ok: false, error: "Method not allowed" });
