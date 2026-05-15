@@ -141,6 +141,8 @@
           const sessionResponse = await postJson("/api/auth/session", {
             action: "organization-login",
             role: "org_admin",
+            organizationName: body.name,
+            identifier: data.organizationId || data.tenantId || body.email,
             tenantId: data.tenantId,
             email: body.adminEmail,
             password: body.adminPassword,
