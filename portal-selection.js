@@ -199,6 +199,14 @@
     render();
   };
 
+  const selectAllAvailable = () => {
+    const installed = new Set(settings.installedPortals || []);
+    catalog.forEach((portal) => {
+      if (!installed.has(portal.id)) selected.add(portal.id);
+    });
+    render();
+  };
+
   const install = async (portalIds) => {
     const ids = Array.from(new Set((Array.isArray(portalIds) ? portalIds : [portalIds]).filter(Boolean)));
     if (!ids.length) return;
@@ -259,6 +267,7 @@
       if (card && !event.target.closest("a,button,input,label")) toggleSelection(card.dataset.portalCard);
     });
     $("#portal-select-core")?.addEventListener("click", selectCoreSet);
+    $("#portal-select-all")?.addEventListener("click", selectAllAvailable);
     $("#portal-clear-selection")?.addEventListener("click", () => {
       selected.clear();
       render();
