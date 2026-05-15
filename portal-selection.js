@@ -239,6 +239,16 @@
     if (help) help.hidden = false;
   };
 
+  const normalizePageCopy = () => {
+    const subtitle = $(".portal-manager-subtitle");
+    const helpText = $("#pwa-install-help-text");
+    if (subtitle) subtitle.textContent = "Select multiple modules and install them together as one MAPPHEX Workspace App.";
+    if (helpText) {
+      helpText.textContent =
+        "After modules are enabled, your browser may ask to install MAPPHEX Workspace App. If no prompt appears, the workspace will still open and you can install from your browser menu.";
+    }
+  };
+
   const manualInstallMessage = () => {
     const ua = navigator.userAgent || "";
     if (/iPad|iPhone|iPod/i.test(ua)) {
@@ -313,6 +323,7 @@
   };
 
   document.addEventListener("DOMContentLoaded", () => {
+    normalizePageCopy();
     document.addEventListener("click", guardPortalLink);
     $("#portal-grid")?.addEventListener("click", (event) => {
       const check = event.target.closest("input[data-portal-check]");
