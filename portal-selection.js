@@ -96,8 +96,9 @@
     let mine;
     try {
       const responses = await Promise.all([fetchJson("/api/org-admin"), fetchJson("/api/organizations?scope=mine")]);
+      if (!responses[0].res.ok || !responses[0].data?.ok) throw new Error(responses[0].data?.error || "Unable to load portals");
       admin = responses[0].data;
-      mine = responses[1].data;
+      mine = responses[1].res.ok && responses[1].data?.ok ? responses[1].data : { ok: true, organization: localOrg(session.tenantId) };
     } catch {
       admin = localAdminPayload(session.tenantId);
       mine = { ok: true, organization: localOrg(session.tenantId) };
