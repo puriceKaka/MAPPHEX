@@ -17,7 +17,6 @@ const PORTAL_CATALOG = [
   { id: "inventory", title: "Inventory Module", href: moduleHref, description: "Stock, items, transfers, and availability.", features: ["Stock levels", "Transfers", "Availability"] },
   { id: "logistics", title: "Logistics Module", href: moduleHref, description: "Dispatch, delivery, fleet, and tracking workflows.", features: ["Dispatch", "Tracking", "Delivery status"] },
   { id: "sales", title: "Sales Module", href: moduleHref, description: "Sales operations, customers, and performance.", features: ["Customers", "Sales activity", "Performance"] },
-  { id: "school", title: "School Module", href: moduleHref, description: "School operations and administrative workflows.", features: ["Administration", "Departments", "Reports"] },
   { id: "analytics", title: "Analytics Module", href: moduleHref, description: "Realtime analytics, reports, and insights.", features: ["Charts", "Insights", "Activity trends"] },
   { id: "admin", title: "Admin Module", href: "organization-admin.html", description: "Organization settings, users, roles, and modules.", features: ["Users", "Settings", "Permissions"] },
   { id: "staff", title: "Staff Module", href: moduleHref, description: "Role-specific staff workspace.", features: ["Tasks", "Notifications", "Role access"] },

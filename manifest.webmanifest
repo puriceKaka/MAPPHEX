@@ -1,7 +1,7 @@
 {
-  "name": "ByteWave Workspace",
-  "short_name": "ByteWave",
-  "description": "Install ByteWave as one unified organization workspace app with selected portal modules for operations, finance, HR, logistics, reporting, and administration.",
+  "name": "MAPPHEX Workspace App",
+  "short_name": "MAPPHEX",
+  "description": "Install MAPPHEX as one unified organization workspace app with selected modules for operations, finance, HR, logistics, reporting, and administration.",
   "start_url": "./organization-login.html",
   "scope": "./",
   "display": "standalone",

@@ -20,7 +20,6 @@
     { id: "inventory", title: "Inventory Module", href: "organization-module.html", description: "Stock management, item tracking, warehouse control, and movement logs.", features: ["Stock levels", "Transfers", "Availability"] },
     { id: "logistics", title: "Logistics Module", href: "organization-module.html", description: "Delivery tracking, dispatch management, fleet operations, and shipment status.", features: ["Dispatch", "Tracking", "Delivery status"] },
     { id: "sales", title: "Sales Module", href: "organization-module.html", description: "Customer management, sales records, order tracking, and performance dashboards.", features: ["Customers", "Sales activity", "Performance"] },
-    { id: "school", title: "School Module", href: "organization-module.html", description: "Student records, classes, departments, reports, and school admin workflows.", features: ["Administration", "Departments", "Reports"] },
     { id: "analytics", title: "Analytics Module", href: "organization-module.html", description: "Real-time charts, business insights, activity tracking, and performance dashboards.", features: ["Charts", "Insights", "Activity trends"] },
     { id: "admin", title: "Admin Module", href: "organization-admin.html", description: "Organization settings, users, roles, permissions, and module activation control.", features: ["Users", "Settings", "Permissions"] },
     { id: "staff", title: "Staff Module", href: "organization-module.html", description: "Task assignments, notifications, role dashboards, and daily activity views.", features: ["Tasks", "Notifications", "Role access"] },
@@ -38,7 +37,6 @@
     inventory: { title: "Inventory Control", labels: ["Item", "Warehouse", "Movement", "Quantity"], sample: ["Barcode Scanner", "Main Store", "Received", "12"] },
     logistics: { title: "Logistics Flow", labels: ["Shipment", "Driver/Fleet", "Route", "Status"], sample: ["ORD-2048", "Fleet 03", "Nairobi-Kisumu", "In transit"] },
     sales: { title: "Sales Pipeline", labels: ["Customer", "Order", "Value", "Status"], sample: ["Acme Retail", "SO-1021", "12800", "Confirmed"] },
-    school: { title: "School Administration", labels: ["Student/Class", "Department", "Report", "Status"], sample: ["Grade 4A", "Academics", "Term Report", "Ready"] },
     analytics: { title: "Analytics Insights", labels: ["Metric", "Source", "Trend", "Action"], sample: ["Revenue", "Finance", "+14%", "Review"] },
     admin: { title: "Admin Controls", labels: ["Setting", "Scope", "Owner", "Status"], sample: ["Role Policy", "Organization", "Admin", "Active"] },
     staff: { title: "Staff Tasks", labels: ["Task", "Assigned To", "Priority", "Status"], sample: ["Stock count", "Store Staff", "High", "Open"] },
@@ -172,7 +170,7 @@
       const permissions = settings.modulePermissions?.[moduleId] || [];
       const moduleCode = (moduleDef.title || "M").slice(0, 2).toUpperCase();
 
-      document.title = `${moduleDef.title} • ByteWave`;
+      document.title = `${moduleDef.title} • MAPPHEX`;
       $("#module-title").textContent = moduleDef.title;
       $("#module-subtitle").textContent = `${org.organizationId || session.tenantId} • workspace portal`;
       $("#module-heading").textContent = moduleDef.title;

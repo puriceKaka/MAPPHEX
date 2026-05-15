@@ -17,7 +17,6 @@ const catalog = [
   { id: "hr", label: "HR & Staff", sectors: ["all"], permissions: ["hr.manage"] },
   { id: "crm", label: "Customers & CRM", sectors: ["all"], permissions: ["customers.manage"] },
   { id: "documents", label: "Files & Documents", sectors: ["all"], permissions: ["documents.manage"] },
-  { id: "school", label: "School Operations", sectors: ["school"], permissions: ["school.manage"] },
   { id: "service", label: "Service Desk", sectors: ["company", "service", "agency", "corporate"], permissions: ["service.manage"] },
 ];
 

@@ -52,7 +52,7 @@
 
     if (!deferredPrompt) {
       setButtonState("Use Browser Menu", true);
-      window.setTimeout(() => setButtonState("Install selected as PWA app", false), 2400);
+      window.setTimeout(() => setButtonState("Install Selected as App", false), 2400);
       emitStatus();
       return { ok: false, reason: "prompt-unavailable" };
     }
@@ -69,7 +69,7 @@
       emitStatus();
       return { ok: true, installed: true };
     }
-    setButtonState("Install selected as PWA app", false);
+    setButtonState("Install Selected as App", false);
     emitStatus();
     return { ok: false, reason: "dismissed" };
   };
@@ -92,7 +92,7 @@
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     deferredPrompt = event;
-    setButtonState("Install selected as PWA app", false);
+    setButtonState("Install Selected as App", false);
     hideButtonIfInstalled();
     emitStatus();
   });
@@ -110,7 +110,7 @@
       installButtons.add(button);
       button.addEventListener("click", () => promptInstall());
     });
-    setButtonState(isStandalone() ? "App Installed" : "Install selected as PWA app", isStandalone());
+    setButtonState(isStandalone() ? "App Installed" : "Install Selected as App", isStandalone());
     emitStatus();
   });
 

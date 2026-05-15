@@ -15,7 +15,6 @@
     { id: "inventory", title: "Inventory Module", href: "organization-module.html", description: "Stock, items, transfers, and availability.", features: ["Stock levels", "Transfers", "Availability"] },
     { id: "logistics", title: "Logistics Module", href: "organization-module.html", description: "Dispatch, delivery, fleet, and tracking workflows.", features: ["Dispatch", "Tracking", "Delivery status"] },
     { id: "sales", title: "Sales Module", href: "organization-module.html", description: "Sales operations, customers, and performance.", features: ["Customers", "Sales activity", "Performance"] },
-    { id: "school", title: "School Module", href: "organization-module.html", description: "School operations and administrative workflows.", features: ["Administration", "Departments", "Reports"] },
     { id: "analytics", title: "Analytics Module", href: "organization-module.html", description: "Realtime analytics, reports, and insights.", features: ["Charts", "Insights", "Activity trends"] },
     { id: "admin", title: "Admin Module", href: "organization-admin.html", description: "Organization settings, users, roles, and modules.", features: ["Users", "Settings", "Permissions"] },
     { id: "staff", title: "Staff Module", href: "organization-module.html", description: "Role-specific staff workspace.", features: ["Tasks", "Notifications", "Role access"] },
@@ -51,7 +50,6 @@
   const guardPortalLink = (event) => {
     const link = event.target.closest("a[href]");
     if (!link) return;
-    if (link.href.includes("assert-management.lovable.app")) return;
     if (!link.href.includes("organization-module.html") && !link.href.includes("organization-admin.html")) return;
     const session = window.EnterpriseCore?.getSession?.();
     if (session?.tenantId) return;
@@ -91,7 +89,6 @@
       analytics: "Realtime insights ready",
       admin: "Organization controls enabled",
       sales: "Customer and sales tracking",
-      school: "Institution workflow ready",
       customer: "Customer operations enabled",
     };
     return summaries[portal.id] || "Workspace module ready";
@@ -133,7 +130,7 @@
             <span class="portal-status">Add portals</span>
           </div>
           <h3>Add Portals</h3>
-          <p>Select more modules and install them into this same ByteWave workspace app.</p>
+          <p>Select more modules and install them into this same MAPPHEX Workspace App.</p>
           <div class="portal-hub-summary">Non-selected portals stay out of the app until you add them here.</div>
           <a class="btn" href="${escapeHtml(addUrl)}">Open Portal Manager</a>
         </article>`;
@@ -186,10 +183,10 @@
         .map((portal) => ({ ...portal, summary: portalSummary(portal, settings) }));
 
       const orgName = org?.name || "Organization";
-      $("#workspace-title").textContent = `ByteWave Workspace`;
+      $("#workspace-title").textContent = `MAPPHEX Workspace`;
       $("#workspace-subtitle").textContent = `${org?.organizationId || tenantId} • ${org?.businessType || settings.businessType || "company"}`;
-      $("#portal-hub-heading").textContent = `ByteWave Workspace - ${orgName}`;
-      $("#portal-hub-summary").textContent = `One installed PWA app for ${orgName}'s selected modules, organization data, and secure workflows.`;
+      $("#portal-hub-heading").textContent = `MAPPHEX Workspace - ${orgName}`;
+      $("#portal-hub-summary").textContent = `One installed workspace app for ${orgName}'s selected modules, organization data, and secure workflows.`;
       $("#profile-name").textContent = orgName;
       $("#subscription-status").textContent = org?.subscriptionStatus ? `Subscription: ${org.subscriptionStatus}` : "Subscription: active";
       $("#notification-badge").textContent = `${Math.max(1, portals.length)} notifications`;

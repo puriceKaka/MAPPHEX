@@ -46,7 +46,7 @@ Serverless deployments use the same endpoint as a polling source. Production can
 
 ## Business Modules
 
-`/api/modules` stores enabled modules per tenant. Supported module families include inventory, POS, orders, logistics, pharmacy controls, finance, HR, CRM, files, school operations, and service desk.
+`/api/modules` stores enabled modules per tenant. Supported module families include inventory, POS, orders, logistics, pharmacy controls, finance, HR, CRM, files, reporting, branches, departments, and service desk.
 
 ## Scale Notes
 

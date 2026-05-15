@@ -10,7 +10,7 @@
   const NOTIFY_KEY = "enterprise_notify_v1";
   const CSRF_KEY = "enterprise_csrf_v1";
   const LEGACY_PREFIX = "jix" + "els_";
-  const PREFIXABLE = new RegExp(`^(${LEGACY_PREFIX}|enterprise_|assetwise_)`, "i");
+  const PREFIXABLE = new RegExp(`^(${LEGACY_PREFIX}|enterprise_)`, "i");
   const GLOBAL_KEYS = new Set(["enterprise_api_enabled_v1", `${LEGACY_PREFIX}api_enabled_v1`, TENANT_KEY]);
 
   const cleanId = (value) =>

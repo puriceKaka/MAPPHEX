@@ -22,7 +22,7 @@
         <div class="panel-header portal-manager-header">
           <div>
             <h2>Portal Manager</h2>
-            <p class="portal-manager-subtitle">Select multiple portals and install them together as one unified workspace app.</p>
+            <p class="portal-manager-subtitle">Select multiple modules and install them together as one MAPPHEX Workspace App.</p>
           </div>
           <div id="portal-progress" class="panel-actions muted">Choose portals to install</div>
         </div>
@@ -33,14 +33,14 @@
           </div>
           <div class="portal-bulk-actions">
             <button id="portal-select-core" class="btn" type="button">Select core set</button>
-            <button id="portal-select-all" class="btn" type="button">Select all portals</button>
+            <button id="portal-select-all" class="btn" type="button">Select all modules</button>
             <button id="portal-clear-selection" class="btn" type="button">Clear</button>
-            <button id="portal-install-selected" class="btn primary" type="button" disabled>Install selected as PWA app</button>
+            <button id="portal-install-selected" class="btn primary" type="button" disabled>Install Selected as App</button>
           </div>
         </div>
         <div id="pwa-install-help" class="pwa-install-help" hidden>
           <strong>Device app install</strong>
-          <p id="pwa-install-help-text">After portals are enabled, your browser will ask to install ByteWave Workspace. If no prompt appears, use your browser menu and choose Install app or Add to Home Screen.</p>
+          <p id="pwa-install-help-text">After modules are enabled, your browser will ask to install MAPPHEX Workspace App. If no prompt appears, use your browser menu and choose Install app or Add to Home Screen.</p>
           <div class="portal-card-actions">
             <a id="pwa-open-workspace" class="btn primary" href="organization-workspace.html">Open Workspace</a>
             <button id="pwa-retry-install" class="btn" type="button">Try install prompt again</button>
@@ -49,22 +49,11 @@
         <div id="portal-grid" class="portal-install-grid"></div>
       </section>
 
-      <section class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>Standalone AssetWise Portal</h2>
-            <p class="portal-manager-subtitle">AssetWise is separate from the unified MAPPHEX workspace modules and opens in its own portal.</p>
-          </div>
-          <div class="panel-actions">
-            <a class="btn primary" href="https://assert-management.lovable.app/" target="_blank" rel="noopener noreferrer">Open AssetWise</a>
-          </div>
-        </div>
-      </section>
     </main>
     <script src="enterprise-core.js"></script>
     <script src="kv-client.js"></script>
     <script src="enterprise-store.js"></script>
     <script src="pwa.js"></script>
-    <script src="portal-selection.js?v=12"></script>
+    <script src="portal-selection.js?v=13"></script>
   </body>
 </html>
