@@ -179,7 +179,6 @@
       $("#portal-hub-heading").textContent = `ByteWave Workspace - ${orgName}`;
       $("#portal-hub-summary").textContent = `One installed PWA app for ${orgName}'s selected modules, organization data, and secure workflows.`;
       $("#profile-name").textContent = orgName;
-      $("#profile-email").textContent = org?.organizationId || tenantId;
       $("#subscription-status").textContent = org?.subscriptionStatus ? `Subscription: ${org.subscriptionStatus}` : "Subscription: active";
       $("#notification-badge").textContent = `${Math.max(1, portals.length)} notifications`;
       $("#hub-kpi-portals").textContent = portals.length;
