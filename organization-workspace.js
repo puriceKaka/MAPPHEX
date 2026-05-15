@@ -48,6 +48,17 @@
     return (Array.isArray(rows) ? rows : []).find((row) => row.id === tenant) || null;
   };
 
+  const guardPortalLink = (event) => {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    if (link.href.includes("assert-management.lovable.app")) return;
+    if (!link.href.includes("organization-module.html") && !link.href.includes("organization-admin.html")) return;
+    const session = window.EnterpriseCore?.getSession?.();
+    if (session?.tenantId) return;
+    event.preventDefault();
+    location.href = "organization-login.html";
+  };
+
   let portals = [];
 
   const portalUrl = (portal, org) => {
@@ -130,6 +141,7 @@
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener("click", guardPortalLink);
     const fromQuery = new URLSearchParams(location.search).get("tenant");
     const tenant = fromQuery || window.EnterpriseCore?.currentTenantId?.();
     if (tenant) window.EnterpriseCore?.setTenant?.(tenant);

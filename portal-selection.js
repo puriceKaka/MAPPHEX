@@ -54,6 +54,17 @@
     return (Array.isArray(rows) ? rows : []).find((row) => row.id === tenant) || null;
   };
 
+  const guardPortalLink = (event) => {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    if (link.href.includes("assert-management.lovable.app")) return;
+    if (!link.href.includes("organization-module.html") && !link.href.includes("organization-admin.html")) return;
+    const session = window.EnterpriseCore?.getSession?.();
+    if (session?.tenantId) return;
+    event.preventDefault();
+    location.href = "organization-login.html";
+  };
+
   const localAdminPayload = (tenant) => {
     window.EnterpriseCore?.setTenant?.(tenant);
     const rawSettings = readJson(SETTINGS_KEY, {});
@@ -292,6 +303,7 @@
   };
 
   document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("click", guardPortalLink);
     $("#portal-grid")?.addEventListener("click", (event) => {
       const check = event.target.closest("input[data-portal-check]");
       if (check) {
