@@ -40,18 +40,20 @@
     }
   };
 
-  const localLogin = async (identifier, password) => {
+  const localLogin = async (organizationName, identifier, password) => {
+    const name = String(organizationName || "").trim().toLowerCase();
     const ident = String(identifier || "").trim().toLowerCase();
     const cleanIdent = cleanId(ident);
     const rows = readJson(ORGS_KEY, []);
     const passwordHash = await digest(password || "");
     const organization = (Array.isArray(rows) ? rows : []).find(
       (row) =>
-        row.id === cleanIdent ||
-        String(row.organizationId || "").toLowerCase() === ident ||
-        String(row.referenceCode || "").toLowerCase() === ident ||
-        String(row.admin?.email || "").toLowerCase() === ident ||
-        String(row.contact?.email || "").toLowerCase() === ident,
+        String(row.name || "").trim().toLowerCase() === name &&
+        (row.id === cleanIdent ||
+          String(row.organizationId || "").toLowerCase() === ident ||
+          String(row.referenceCode || "").toLowerCase() === ident ||
+          String(row.admin?.email || "").toLowerCase() === ident ||
+          String(row.contact?.email || "").toLowerCase() === ident),
     );
     if (!organization || organization.localPasswordHash !== passwordHash) return null;
     return {
@@ -98,6 +100,11 @@
       result.style.color = "var(--muted)";
       result.textContent = "Verifying credentials...";
       const body = Object.fromEntries(new FormData(event.currentTarget).entries());
+      if (!body.organizationName || !body.identifier || !body.password) {
+        result.style.color = "var(--danger)";
+        result.textContent = "Organization name, organization email or ID, and password are required.";
+        return;
+      }
       try {
         let data;
         try {
@@ -107,6 +114,7 @@
             body: JSON.stringify({
             action: "organization-login",
             role: "org_admin",
+            organizationName: body.organizationName,
             identifier: body.identifier,
             email: body.identifier,
             password: body.password,
@@ -115,7 +123,7 @@
           data = response.data;
           if (!response.res.ok || !data?.ok) throw new Error(data?.error || "Login failed");
         } catch {
-          data = await localLogin(body.identifier, body.password);
+          data = await localLogin(body.organizationName, body.identifier, body.password);
           if (!data?.ok) throw new Error("Login failed");
         }
         window.EnterpriseCore?.setTenant?.(data.session.tenantId);

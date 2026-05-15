@@ -21,7 +21,8 @@
           <p>Access your centralized MAPPHEX Portal Hub with your organization credentials.</p>
         </div>
         <form id="organization-login-form" class="auth-form">
-          <label class="field"><span>Organization ID / Company Email</span><input name="identifier" required autocomplete="username" placeholder="ORG-ABC123 or company@example.com" /></label>
+          <label class="field"><span>Organization name</span><input name="organizationName" required autocomplete="organization" placeholder="ABC Pharmacy Ltd" /></label>
+          <label class="field"><span>Organization email / ID</span><input name="identifier" required autocomplete="username" placeholder="company@example.com or ORG-ABC123" /></label>
           <label class="field"><span>Password</span><input name="password" type="password" required minlength="6" /></label>
           <label class="remember-row"><input name="remember" type="checkbox" checked /> <span>Keep me signed in on this device</span></label>
           <button class="btn primary" type="submit">Access Portal Hub</button>
@@ -32,6 +33,6 @@
     </main>
     <script src="enterprise-core.js"></script>
     <script src="pwa.js"></script>
-    <script src="organization-login.js?v=4"></script>
+    <script src="organization-login.js?v=5"></script>
   </body>
 </html>

@@ -192,19 +192,21 @@ module.exports = async (req, res) => {
   }
 };
 
-module.exports.verifyOrganizationAdmin = async (identifier, email, password) => {
+module.exports.verifyOrganizationAdmin = async (identifier, email, password, organizationName = "") => {
   const store = getStore();
   const rows = await loadOrganizations(store);
   const ident = String(identifier || "").trim().toLowerCase();
   const cleanIdent = cleanTenantId(ident);
   const mail = String(email || ident || "").trim().toLowerCase();
+  const name = String(organizationName || "").trim().toLowerCase();
   const org = rows.find(
     (row) =>
-      row.id === cleanIdent ||
-      String(row.organizationId || "").toLowerCase() === ident ||
-      String(row.referenceCode || "").toLowerCase() === ident ||
-      String(row.admin?.email || "").toLowerCase() === mail ||
-      String(row.contact?.email || "").toLowerCase() === mail,
+      (!name || String(row.name || "").trim().toLowerCase() === name) &&
+      (row.id === cleanIdent ||
+        String(row.organizationId || "").toLowerCase() === ident ||
+        String(row.referenceCode || "").toLowerCase() === ident ||
+        String(row.admin?.email || "").toLowerCase() === mail ||
+        String(row.contact?.email || "").toLowerCase() === mail),
   );
   if (!org || org.status !== "active" || !verifySecret(password, org.adminPasswordHash)) return null;
   return publicOrg(org);

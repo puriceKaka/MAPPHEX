@@ -23,11 +23,14 @@ module.exports = async (req, res) => {
       const role = String(body?.role || "org_admin").trim().toLowerCase();
       const identifier = String(body?.identifier || body?.tenantId || body?.email || body?.username || "").trim();
       const email = String(body?.email || body?.username || body?.identifier || "").trim().toLowerCase();
-      if (!identifier) return sendJson(res, 400, { ok: false, error: "Organization ID or company email is required" });
+      const organizationName = String(body?.organizationName || body?.name || "").trim();
+      if (!organizationName || !identifier || !body?.password) {
+        return sendJson(res, 400, { ok: false, error: "Organization name, organization email or ID, and password are required" });
+      }
       let tenantId = getTenantId(req, body);
       let organization = null;
       if (body?.action === "organization-login" || role === "org_admin") {
-        organization = await verifyOrganizationAdmin(identifier || tenantId, email, body?.password);
+        organization = await verifyOrganizationAdmin(identifier || tenantId, email, body?.password, organizationName);
         if (!organization) return sendJson(res, 401, { ok: false, error: "Invalid organization credentials" });
         tenantId = organization.id;
       }
