@@ -1,6 +1,8 @@
 (() => {
   "use strict";
 
+  document.body?.classList.add("js-ready");
+
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const nav = document.querySelector("[data-nav]");
   const navToggle = document.querySelector("[data-nav-toggle]");

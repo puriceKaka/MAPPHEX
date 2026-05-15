@@ -796,11 +796,17 @@ html {
 }
 
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.js-ready .reveal {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 600ms ease, transform 600ms ease;
 }
 
+.js-ready .reveal.is-visible,
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
