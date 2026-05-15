@@ -3,6 +3,7 @@
 
   let deferredPrompt = null;
   let installed = false;
+  let serviceWorkerReady = null;
   const installButtons = new Set();
   const listeners = new Set();
 
@@ -31,6 +32,36 @@
     supported: "serviceWorker" in navigator,
   });
 
+  const registerServiceWorker = () => {
+    if (!("serviceWorker" in navigator)) return Promise.resolve(false);
+    if (!serviceWorkerReady) {
+      serviceWorkerReady = navigator.serviceWorker
+        .register("sw.js")
+        .then(() => navigator.serviceWorker.ready)
+        .then(() => true)
+        .catch(() => false);
+    }
+    return serviceWorkerReady;
+  };
+
+  const waitForInstallPrompt = (timeoutMs = 1500) =>
+    new Promise((resolve) => {
+      if (deferredPrompt) {
+        resolve(true);
+        return;
+      }
+      let done = false;
+      const finish = (value) => {
+        if (done) return;
+        done = true;
+        window.removeEventListener("beforeinstallprompt", onPrompt);
+        resolve(value);
+      };
+      const onPrompt = () => finish(true);
+      window.addEventListener("beforeinstallprompt", onPrompt, { once: true });
+      window.setTimeout(() => finish(!!deferredPrompt), timeoutMs);
+    });
+
   const emitStatus = () => {
     const detail = status();
     listeners.forEach((listener) => {
@@ -49,6 +80,9 @@
       window.setTimeout(hideButtonIfInstalled, 800);
       return { ok: true, installed: true };
     }
+
+    await registerServiceWorker();
+    if (!deferredPrompt) await waitForInstallPrompt();
 
     if (!deferredPrompt) {
       setButtonState("Use Browser Menu", true);
@@ -85,7 +119,7 @@
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js").catch(() => null);
+      registerServiceWorker().then(emitStatus).catch(() => null);
     });
   }
 

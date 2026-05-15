@@ -239,6 +239,17 @@
     if (help) help.hidden = false;
   };
 
+  const manualInstallMessage = () => {
+    const ua = navigator.userAgent || "";
+    if (/iPad|iPhone|iPod/i.test(ua)) {
+      return "Modules are installed. On iPhone or iPad, tap Share, then Add to Home Screen. Opening your workspace now.";
+    }
+    if (/Android/i.test(ua)) {
+      return "Modules are installed. If no install prompt appears, tap the browser menu, then Install app or Add to Home screen. Opening your workspace now.";
+    }
+    return "Modules are installed. If no install prompt appears, use Chrome or Edge menu, then Install MAPPHEX Workspace App. Opening your workspace now.";
+  };
+
   const install = async (portalIds, options = {}) => {
     const ids = Array.from(new Set((Array.isArray(portalIds) ? portalIds : [portalIds]).filter(Boolean)));
     if (!ids.length) return;
@@ -289,9 +300,10 @@
       const message =
         reason === "dismissed"
           ? "Modules are installed. You dismissed the app install prompt; click Try install prompt again or open the workspace."
-          : "Modules are installed. Your browser did not show the install prompt yet. Use the browser menu and choose Install app or Add to Home Screen, then open the workspace.";
+          : manualInstallMessage();
       if (progress) progress.textContent = message;
       showPwaHelp(message);
+      if (reason !== "dismissed") window.setTimeout(openWorkspace, 2800);
       return;
     }
     if (progress && !options.installPwa) progress.textContent = "Unified installation complete. Opening the workspace app...";
@@ -346,7 +358,10 @@
         if (progress) progress.textContent = "MAPPHEX Workspace App installed. Opening workspace...";
         setTimeout(openWorkspace, 900);
       } else {
-        showPwaHelp("Install prompt is still unavailable. Use the browser menu and choose Install app or Add to Home Screen, then open the workspace.");
+        const message = manualInstallMessage();
+        if (progress) progress.textContent = message;
+        showPwaHelp(message);
+        window.setTimeout(openWorkspace, 2800);
       }
     });
     window.MapphexPWA?.onStatus?.((status) => {
