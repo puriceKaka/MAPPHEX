@@ -1,4 +1,4 @@
-const CACHE_NAME = "enterprise-erp-v18";
+const CACHE_NAME = "enterprise-erp-v19";
 const APP_SHELL = [
   "./",
   "./index.html",

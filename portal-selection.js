@@ -71,8 +71,9 @@
   let selected = new Set();
 
   const portalUrl = (portal) => {
+    if (portal?.id === "assetwise") return portal.externalUrl || portal.href || "https://assert-management.lovable.app/";
     const tenant = window.EnterpriseCore?.currentTenantId?.() || "";
-    const href = portal?.externalUrl || portal?.external ? "organization-module.html" : String(portal?.href || "organization-workspace.html");
+    const href = String(portal?.href || "organization-workspace.html");
     try {
       const url = new URL(href, location.origin);
       url.searchParams.set("tenant", tenant);
@@ -146,7 +147,7 @@
             <div class="portal-card-actions">
               ${
                 isInstalled
-                  ? `<a class="btn primary" href="${escapeHtml(portalUrl(portal))}">Open Portal</a>`
+                  ? `<a class="btn primary" href="${escapeHtml(portalUrl(portal))}" ${portal.id === "assetwise" ? 'target="_blank" rel="noopener noreferrer"' : ""}>Open Portal</a>`
                   : `<button class="btn" data-portal-toggle="${escapeHtml(portal.id)}" type="button">${isSelected ? "Remove from install" : "Add to install"}</button>`
               }
             </div>
