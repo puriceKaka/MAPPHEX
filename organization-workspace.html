@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MAPPHEX Portal Hub</title>
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="images/enterprise-icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="images/enterprise-icon-192.png" />
+    <meta name="theme-color" content="#06101f" />
     <link rel="stylesheet" href="director.css" />
     <link rel="stylesheet" href="management.css" />
     <link rel="stylesheet" href="onboarding.css" />
@@ -21,6 +24,7 @@
       <div class="topbar-actions">
         <span id="subscription-status" class="badge">Subscription</span>
         <span id="notification-badge" class="badge">0 notifications</span>
+        <button class="btn" type="button" data-pwa-install>Install App</button>
         <a id="manage-portals-link" class="btn" href="portal-selection.html">Manage Modules</a>
         <a id="admin-link" class="btn" href="organization-admin.html">Settings</a>
         <a class="btn" href="index.html?logout=1">Logout</a>
@@ -64,6 +68,7 @@
     <script src="enterprise-core.js"></script>
     <script src="kv-client.js"></script>
     <script src="enterprise-store.js"></script>
+    <script src="pwa.js"></script>
     <script src="organization-workspace.js?v=6"></script>
   </body>
 </html>

@@ -1,12 +1,27 @@
 {
-  "name": "MAPPHEX Enterprise Operations Cloud",
+  "name": "MAPPHEX Workspace",
   "short_name": "MAPPHEX",
-  "description": "MAPPHEX multi-tenant enterprise management platform for organizations, operations, finance, HR, logistics, reporting, and administration.",
-  "start_url": "./index.html",
+  "description": "Install MAPPHEX as one unified organization workspace app with portal modules for operations, finance, HR, logistics, reporting, and administration.",
+  "start_url": "./organization-login.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#06101f",
   "theme_color": "#06101f",
+  "categories": ["business", "productivity", "finance"],
+  "shortcuts": [
+    {
+      "name": "Organization Login",
+      "short_name": "Login",
+      "url": "./organization-login.html",
+      "icons": [{ "src": "images/enterprise-icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Portal Hub",
+      "short_name": "Hub",
+      "url": "./organization-workspace.html",
+      "icons": [{ "src": "images/enterprise-icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
   "icons": [
     {
       "src": "images/enterprise-icon-192.png",

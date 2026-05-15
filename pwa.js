@@ -3,6 +3,7 @@
 
   let deferredPrompt = null;
   let installed = false;
+  const installButtons = new Set();
 
   const isStandalone = () =>
     window.matchMedia?.("(display-mode: standalone)")?.matches ||
@@ -71,17 +72,51 @@
   const getButton = () => document.getElementById("pwa-install-btn");
 
   const setButtonState = (label, muted = false) => {
-    const btn = getButton();
-    if (!btn) return;
-    btn.textContent = label;
-    btn.classList.toggle("is-muted", !!muted);
+    const buttons = [getButton(), ...installButtons].filter(Boolean);
+    buttons.forEach((btn) => {
+      btn.textContent = label;
+      btn.classList.toggle("is-muted", !!muted);
+    });
   };
 
   const hideButtonIfInstalled = () => {
     const btn = getButton();
-    if (!btn) return;
-    btn.hidden = isStandalone();
-    document.body.classList.toggle("has-pwa-install", !btn.hidden);
+    if (btn) {
+      btn.hidden = isStandalone();
+      document.body.classList.toggle("has-pwa-install", !btn.hidden);
+    }
+    installButtons.forEach((button) => {
+      button.disabled = isStandalone();
+      if (isStandalone()) button.textContent = "App Installed";
+    });
+  };
+
+  const promptInstall = async () => {
+    if (isStandalone()) {
+      setButtonState("App Installed", true);
+      window.setTimeout(hideButtonIfInstalled, 800);
+      return { ok: true, installed: true };
+    }
+
+    if (!deferredPrompt) {
+      setButtonState("Use Browser Menu", true);
+      window.setTimeout(() => setButtonState("Install MAPPHEX PWA", false), 2400);
+      return { ok: false, reason: "prompt-unavailable" };
+    }
+
+    const promptEvent = deferredPrompt;
+    deferredPrompt = null;
+    setButtonState("Installing...", true);
+    promptEvent.prompt();
+    const choice = await promptEvent.userChoice.catch(() => null);
+    if (choice?.outcome === "accepted") {
+      installed = true;
+      setButtonState("App Installed", true);
+      window.setTimeout(hideButtonIfInstalled, 900);
+      return { ok: true, installed: true };
+    }
+    setButtonState("Install MAPPHEX PWA", false);
+    return { ok: false, reason: "dismissed" };
   };
 
   const createInstallButton = () => {
@@ -93,32 +128,7 @@
     btn.type = "button";
     btn.textContent = "Install App";
     btn.setAttribute("aria-label", "Install MAPPHEX app");
-    btn.addEventListener("click", async () => {
-      if (isStandalone()) {
-        setButtonState("Installed", true);
-        window.setTimeout(hideButtonIfInstalled, 800);
-        return;
-      }
-
-      if (!deferredPrompt) {
-        setButtonState("Open Menu", true);
-        window.setTimeout(() => setButtonState("Install App", false), 2400);
-        return;
-      }
-
-      const promptEvent = deferredPrompt;
-      deferredPrompt = null;
-      setButtonState("Installing...", true);
-      promptEvent.prompt();
-      const choice = await promptEvent.userChoice.catch(() => null);
-      if (choice?.outcome === "accepted") {
-        installed = true;
-        setButtonState("Installed", true);
-        window.setTimeout(hideButtonIfInstalled, 900);
-      } else {
-        setButtonState("Install App", false);
-      }
-    });
+    btn.addEventListener("click", () => promptInstall());
     document.body.appendChild(btn);
     document.body.classList.add("has-pwa-install");
     hideButtonIfInstalled();
@@ -143,6 +153,7 @@
     event.preventDefault();
     deferredPrompt = event;
     createInstallButton();
+    setButtonState("Install MAPPHEX PWA", false);
     hideButtonIfInstalled();
   });
 
@@ -154,6 +165,16 @@
 
   window.addEventListener("DOMContentLoaded", () => {
     createPoweredFooter();
+    document.querySelectorAll("[data-pwa-install]").forEach((button) => {
+      installButtons.add(button);
+      button.addEventListener("click", () => promptInstall());
+    });
     createInstallButton();
+    setButtonState(isStandalone() ? "App Installed" : "Install MAPPHEX PWA", isStandalone());
+  });
+
+  window.MapphexPWA = Object.freeze({
+    promptInstall,
+    isStandalone,
   });
 })();

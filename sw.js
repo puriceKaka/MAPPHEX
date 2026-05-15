@@ -1,4 +1,4 @@
-const CACHE_NAME = "enterprise-erp-v10";
+const CACHE_NAME = "enterprise-erp-v11";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -25,6 +25,7 @@ const APP_SHELL = [
   "./enterprise-platform.js",
   "./kv-client.js",
   "./enterprise-store.js",
+  "./pwa.js",
   "./home.js",
   "./organization-register.js",
   "./organization-login.js",
