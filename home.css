@@ -27,6 +27,13 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: clip;
 }
 
 .site-nav {
@@ -165,6 +172,7 @@ html {
 .site-footer {
   width: min(1200px, calc(100% - 40px));
   margin-inline: auto;
+  min-width: 0;
 }
 
 .site-hero {
@@ -480,6 +488,8 @@ html {
 .site-section {
   position: relative;
   scroll-margin-top: 96px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 620px;
   margin-bottom: 22px;
   padding: clamp(24px, 4vw, 42px);
   border: 1px solid rgba(130, 190, 255, 0.14);
@@ -534,6 +544,7 @@ html {
 .portal-showcase article {
   position: relative;
   overflow: hidden;
+  min-width: 0;
   border-radius: 22px;
   padding: 20px;
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
@@ -906,8 +917,29 @@ html {
 }
 
 @media (max-width: 760px) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .mapphex-home {
+    background:
+      radial-gradient(520px 320px at 18% -10%, rgba(0, 119, 255, 0.22), transparent 62%),
+      linear-gradient(180deg, #020712 0%, #06101f 54%, #030812 100%);
+  }
+
+  .mapphex-home::before,
+  .hero-aura,
+  .dashboard-frame::before {
+    display: none;
+  }
+
   .site-nav {
-    padding: 12px;
+    min-height: 66px;
+    padding: 10px 12px;
+    gap: 10px;
+    background: rgba(3, 8, 18, 0.94);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    backdrop-filter: none;
   }
 
   .site-hero,
@@ -916,8 +948,14 @@ html {
     width: calc(100% - 24px);
   }
 
+  .site-hero {
+    padding-top: 34px;
+    gap: 22px;
+  }
+
   .site-hero h1 {
-    font-size: clamp(38px, 12vw, 58px);
+    font-size: clamp(34px, 11vw, 54px);
+    line-height: 1;
   }
 
   .hero-actions .btn,
@@ -939,10 +977,31 @@ html {
 
   .dashboard-body {
     grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .dashboard-frame {
+    border-radius: 20px;
+    animation: none;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    backdrop-filter: none;
   }
 
   .preview-sidebar {
     display: none;
+  }
+
+  .preview-main {
+    padding: 12px;
+  }
+
+  .preview-chart {
+    min-height: 160px;
+  }
+
+  .preview-chart span {
+    animation: none;
+    filter: none;
   }
 
   .feature-list {
@@ -965,6 +1024,56 @@ html {
 
   .support-link {
     text-align: left;
+  }
+
+  .site-links,
+  .site-actions {
+    width: 100%;
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    backdrop-filter: none;
+  }
+
+  .site-links a,
+  .site-actions .btn,
+  .hero-actions .btn,
+  .contact-panel .btn {
+    min-height: 46px;
+    touch-action: manipulation;
+  }
+
+  .site-links a {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .site-section {
+    scroll-margin-top: 78px;
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2);
+    backdrop-filter: none;
+  }
+
+  .premium-card,
+  .pricing-card,
+  .portal-showcase article,
+  .security-grid article,
+  .solution-strip article,
+  .preview-kpis article,
+  .preview-activity div,
+  .hero-metrics div {
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .premium-card:hover,
+  .portal-showcase article:hover,
+  .pricing-card:hover,
+  .site-links a:hover {
+    transform: none;
   }
 }
 

@@ -33,10 +33,18 @@ body {
   height: 100%;
 }
 
+html {
+  scrollbar-gutter: stable;
+  text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: var(--font);
   color: var(--text);
+  min-width: 320px;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
   background:
     radial-gradient(1100px 650px at 18% -10%, rgba(0, 119, 255, 0.36), transparent 55%),
     radial-gradient(900px 520px at 92% 10%, rgba(91, 214, 255, 0.24), transparent 52%),
@@ -200,6 +208,7 @@ code {
   margin: 22px auto 44px;
   display: grid;
   gap: 16px;
+  min-width: 0;
 }
 
 .panel {
@@ -208,6 +217,7 @@ code {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow: hidden;
+  min-width: 0;
 }
 
 .panel-header {
@@ -581,6 +591,7 @@ canvas {
 
 .auth-card {
   width: min(460px, 100%);
+  max-width: 100%;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -841,7 +852,9 @@ select {
 
 @media (max-width: 760px) {
   body {
-    background-attachment: scroll;
+    background:
+      radial-gradient(520px 320px at 18% -10%, rgba(0, 119, 255, 0.2), transparent 64%),
+      linear-gradient(180deg, var(--bg), #070a14 72%);
   }
 
   .topbar {
@@ -889,6 +902,8 @@ select {
 
   .panel {
     border-radius: 16px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.24);
+    contain: layout paint;
   }
 
   .panel-header {
@@ -915,6 +930,7 @@ select {
     padding: 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
 
   .table {
@@ -931,6 +947,17 @@ select {
     width: 100%;
     min-height: 44px;
     font-size: 16px;
+  }
+
+  .btn:hover,
+  .dept-card:hover {
+    transform: none;
+  }
+
+  .toast,
+  .enterprise-status,
+  .enterprise-notice {
+    backdrop-filter: none;
   }
 }
 

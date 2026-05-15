@@ -4,6 +4,7 @@
   document.body?.classList.add("js-ready");
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const compactViewport = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
   const nav = document.querySelector("[data-nav]");
   const navToggle = document.querySelector("[data-nav-toggle]");
   const navLinks = [...document.querySelectorAll("[data-nav-menu] a")];
@@ -110,7 +111,7 @@
         setActiveLink(id);
         setNavOpen(false);
         target.classList.add("section-focus");
-        target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+        target.scrollIntoView({ behavior: prefersReducedMotion || compactViewport ? "auto" : "smooth", block: "start" });
         history.replaceState(null, "", id);
         setTimeout(() => target.classList.remove("section-focus"), 650);
       });

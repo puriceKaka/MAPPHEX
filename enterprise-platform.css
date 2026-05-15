@@ -75,6 +75,8 @@
   align-items: center;
   gap: 8px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   padding-bottom: 2px;
 }
 
@@ -103,9 +105,22 @@
   .enterprise-livebar {
     right: 10px;
     bottom: 10px;
+    width: calc(100vw - 20px);
   }
 
   .enterprise-module-strip {
     width: calc(100% - 20px);
+  }
+
+  .enterprise-status,
+  .enterprise-notice {
+    backdrop-filter: none;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  }
+
+  .enterprise-notices {
+    max-height: 42vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }
