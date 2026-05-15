@@ -130,7 +130,7 @@
             <span class="portal-status">Add portals</span>
           </div>
           <h3>Add Portals</h3>
-          <p>Select more modules and install them into this same MAPPHEX Workspace App.</p>
+          <p>Select more modules and install them into this same Byewave app.</p>
           <div class="portal-hub-summary">Non-selected portals stay out of the app until you add them here.</div>
           <a class="btn" href="${escapeHtml(addUrl)}">Open Portal Manager</a>
         </article>`;
@@ -183,9 +183,9 @@
         .map((portal) => ({ ...portal, summary: portalSummary(portal, settings) }));
 
       const orgName = org?.name || "Organization";
-      $("#workspace-title").textContent = `MAPPHEX Workspace`;
+      $("#workspace-title").textContent = "Byewave";
       $("#workspace-subtitle").textContent = `${org?.organizationId || tenantId} • ${org?.businessType || settings.businessType || "company"}`;
-      $("#portal-hub-heading").textContent = `MAPPHEX Workspace - ${orgName}`;
+      $("#portal-hub-heading").textContent = `Byewave - ${orgName}`;
       $("#portal-hub-summary").textContent = `One installed workspace app for ${orgName}'s selected modules, organization data, and secure workflows.`;
       $("#profile-name").textContent = orgName;
       $("#subscription-status").textContent = org?.subscriptionStatus ? `Subscription: ${org.subscriptionStatus}` : "Subscription: active";
@@ -195,7 +195,6 @@
       $("#hub-kpi-departments").textContent = settings.departments?.length || 0;
       $("#hub-kpi-session").textContent = `${tenantId} isolated`;
       $("#manage-portals-link").href = `portal-selection.html?tenant=${encodeURIComponent(tenantId)}`;
-      $("#admin-link").href = `organization-admin.html?tenant=${encodeURIComponent(tenantId)}`;
 
       renderPortals("", org);
       $("#portal-search")?.addEventListener("input", (event) => renderPortals(event.currentTarget.value, org));

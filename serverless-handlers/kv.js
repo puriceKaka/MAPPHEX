@@ -5,6 +5,12 @@ const { getTenantId, scopeTenantKey } = require("../api/_lib/tenant");
 const { appendEvent } = require("../api/_lib/events");
 const { assertIdempotent, assertObject, assertSameOrigin, rateLimit } = require("../api/_lib/security");
 
+const unscopedTenantKey = (key) => {
+  const value = String(key || "");
+  const match = value.match(/^tenant:[^:]+:(.+)$/);
+  return match ? match[1] : value;
+};
+
 module.exports = async (req, res) => {
   const store = getStore();
 
@@ -28,7 +34,13 @@ module.exports = async (req, res) => {
           .map((k) => sanitizeKey(scopeTenantKey(tenantId, k)))
           .filter(Boolean);
         if (!keys.length) return sendJson(res, 400, { ok: false, error: "Invalid keys" });
-        const items = await store.mget(keys);
+        const storedItems = await store.mget(keys);
+        const items = {};
+        keys.forEach((key) => {
+          const value = Object.prototype.hasOwnProperty.call(storedItems, key) ? storedItems[key] : null;
+          items[key] = value;
+          items[unscopedTenantKey(key)] = value;
+        });
         return sendJson(res, 200, { ok: true, items });
       }
 

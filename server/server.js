@@ -174,6 +174,12 @@ const scopeTenantKey = (tenantId, key) => {
   return `tenant:${cleanTenantId(tenantId) || "default-company"}:${k}`;
 };
 
+const unscopedTenantKey = (key) => {
+  const value = String(key || "");
+  const match = value.match(/^tenant:[^:]+:(.+)$/);
+  return match ? match[1] : value;
+};
+
 const withKvWriteLock = async (fn) => {
   const prev = kvWriteQueue;
   let release;
@@ -262,7 +268,11 @@ const handleApi = async (req, res, url) => {
         .map((k) => sanitizeKey(scopeTenantKey(tenantId, k)))
         .filter(Boolean);
       const items = {};
-      for (const k of keys) items[k] = Object.prototype.hasOwnProperty.call(store.items, k) ? store.items[k] : null;
+      for (const k of keys) {
+        const value = Object.prototype.hasOwnProperty.call(store.items, k) ? store.items[k] : null;
+        items[k] = value;
+        items[unscopedTenantKey(k)] = value;
+      }
       return ok(res, { items });
     }
 

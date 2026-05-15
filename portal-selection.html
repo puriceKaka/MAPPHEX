@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal Installation • MAPPHEX</title>
+    <title>Portal Installation • Byewave</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="images/bytewave-icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="images/bytewave-icon-192.png" />
@@ -14,7 +14,7 @@
   </head>
   <body data-page="portal-selection">
     <header class="topbar">
-      <div class="brand"><img class="logo-img" src="images/enterprise-logo.png" alt="" /><div><div id="portal-org-name" class="brand-title">MAPPHEX Workspace</div><div class="brand-subtitle muted">Install only the portals your organization needs</div></div></div>
+      <div class="brand"><img class="logo-img" src="images/bytewave-logo.jpg" alt="" /><div><div id="portal-org-name" class="brand-title">Byewave</div><div class="brand-subtitle muted">Install only the portals your organization needs</div></div></div>
       <div class="topbar-actions"><a id="portal-workspace-link" class="btn" href="organization-workspace.html">Workspace</a><a class="btn" href="index.html?logout=1">Logout</a></div>
     </header>
     <main class="layout onboarding-layout">
@@ -22,7 +22,7 @@
         <div class="panel-header portal-manager-header">
           <div>
             <h2>Portal Manager</h2>
-            <p class="portal-manager-subtitle">Select multiple modules and install them together as one MAPPHEX Workspace App.</p>
+            <p class="portal-manager-subtitle">Select multiple modules and install them together as one Byewave app.</p>
           </div>
           <div id="portal-progress" class="panel-actions muted">Choose portals to install</div>
         </div>
@@ -40,7 +40,7 @@
         </div>
         <div id="pwa-install-help" class="pwa-install-help" hidden>
           <strong>Device app install</strong>
-          <p id="pwa-install-help-text">After modules are enabled, your browser may ask to install MAPPHEX Workspace App. If no prompt appears, the workspace will still open and you can install from your browser menu.</p>
+          <p id="pwa-install-help-text">After modules are enabled, your browser may ask to install Byewave. If no prompt appears, the workspace will still open and you can install from your browser menu.</p>
           <div class="portal-card-actions">
             <a id="pwa-open-workspace" class="btn primary" href="organization-workspace.html">Open Workspace</a>
             <button id="pwa-retry-install" class="btn" type="button">Try install prompt again</button>
@@ -53,7 +53,8 @@
     <script src="enterprise-core.js"></script>
     <script src="kv-client.js"></script>
     <script src="enterprise-store.js"></script>
-    <script src="pwa.js?v=3"></script>
-    <script src="portal-selection.js?v=14"></script>
+    <script src="enterprise-modules.js"></script>
+    <script src="pwa.js?v=4"></script>
+    <script src="portal-selection.js?v=15"></script>
   </body>
 </html>

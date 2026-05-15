@@ -11,7 +11,7 @@
   const MODULE_DATA_KEY = "enterprise_module_records_v1";
   const ACTIVITY_KEY = "enterprise_module_activity_v1";
 
-  const PORTAL_CATALOG = [
+  const PORTAL_CATALOG = window.EnterpriseModules?.catalog || [
     { id: "branch", title: "Branch Management", href: "organization-module.html", description: "Manage branches, local teams, performance, and branch analytics.", features: ["Branch records", "Local teams", "Operational scope"] },
     { id: "departments", title: "Department Management", href: "organization-module.html", description: "Create departments, assign employees, manage approvals, and track workflows.", features: ["Department roles", "Approvals", "Workflows"] },
     { id: "hr", title: "HR Module", href: "organization-module.html", description: "Employee records, attendance, payroll structure, role assignment, and HR reports.", features: ["Shared users", "Workforce reports", "Role access"] },
@@ -26,9 +26,9 @@
     { id: "customer", title: "Customer Module", href: "organization-module.html", description: "Customer records, service tracking, support tickets, and interaction history.", features: ["Customers", "Service records", "Support"] },
     { id: "reporting", title: "Reporting Module", href: "organization-module.html", description: "Exportable reports, financial summaries, operational reports, and printable analytics.", features: ["Operational reports", "Financial summaries", "Exports"] },
   ];
-  const VALID_PORTAL_IDS = new Set(PORTAL_CATALOG.map((portal) => portal.id));
+  const VALID_PORTAL_IDS = window.EnterpriseModules?.validIds || new Set(PORTAL_CATALOG.map((portal) => portal.id));
 
-  const MODULE_WORKFLOWS = {
+  const MODULE_WORKFLOWS = window.EnterpriseModules?.workflows || {
     branch: { title: "Branch Operations", labels: ["Branch", "Manager", "Performance", "Status"], sample: ["Nairobi CBD", "Branch Lead", "92%", "Active"] },
     departments: { title: "Department Workflows", labels: ["Department", "Lead", "Workflow", "Approval"], sample: ["Operations", "Supervisor", "Procurement", "Pending"] },
     hr: { title: "HR Records", labels: ["Employee", "Role", "Attendance", "Payroll"], sample: ["Jane Staff", "Pharmacist", "Present", "Processed"] },
@@ -57,6 +57,11 @@
     localStorage.setItem(key, JSON.stringify(value ?? null));
   };
 
+  const enrichPortal = (portal) => ({
+    ...(window.EnterpriseModules?.get?.(portal?.id) || {}),
+    ...(portal || {}),
+  });
+
   const fetchJson = async (url) => {
     const res = await fetch(url);
     const text = await res.text();
@@ -77,13 +82,31 @@
 
   const moduleUrl = (id, tenantId) => `organization-module.html?tenant=${encodeURIComponent(tenantId)}&portal=${encodeURIComponent(id)}`;
 
-  const moduleData = () => readJson(MODULE_DATA_KEY, {});
-  const saveModuleData = (data) => writeJson(MODULE_DATA_KEY, data);
+  const store = () => window.EnterpriseStore || null;
+  const storeGet = (key, fallback) => store()?.getJson?.(key, null) ?? readJson(key, fallback);
+  const storeSet = (key, value) => {
+    writeJson(key, value);
+    store()?.setJson?.(key, value);
+  };
+
+  const hydrateSharedData = async () => {
+    const shared = store();
+    if (!shared?.bootstrap) return;
+    await shared.bootstrap([MODULE_DATA_KEY, ACTIVITY_KEY]).catch(() => null);
+    const localRecords = readJson(MODULE_DATA_KEY, {});
+    if (Object.keys(localRecords || {}).length && !shared.getJson(MODULE_DATA_KEY, null)) shared.setJson(MODULE_DATA_KEY, localRecords);
+    const localActivity = readJson(ACTIVITY_KEY, []);
+    if (Array.isArray(localActivity) && localActivity.length && !shared.getJson(ACTIVITY_KEY, null)) shared.setJson(ACTIVITY_KEY, localActivity);
+  };
+
+  const moduleData = () => storeGet(MODULE_DATA_KEY, {});
+  const saveModuleData = (data) => storeSet(MODULE_DATA_KEY, data);
 
   const appendActivity = (moduleId, action, detail) => {
-    const rows = readJson(ACTIVITY_KEY, []);
+    const currentRows = storeGet(ACTIVITY_KEY, []);
+    const rows = Array.isArray(currentRows) ? currentRows : [];
     rows.push({ id: `act-${Date.now()}`, moduleId, action, detail, at: new Date().toISOString() });
-    writeJson(ACTIVITY_KEY, rows.slice(-400));
+    storeSet(ACTIVITY_KEY, rows.slice(-400));
     window.EnterpriseCore?.notify?.("Workspace updated", `${action} in ${moduleId}`);
   };
 
@@ -163,14 +186,15 @@
         return;
       }
 
-      const moduleDef = (admin.portalCatalog || PORTAL_CATALOG).find((item) => item.id === moduleId);
+      const foundModule = (admin.portalCatalog || PORTAL_CATALOG).find((item) => item.id === moduleId);
+      const moduleDef = foundModule ? enrichPortal(foundModule) : null;
       if (!moduleDef) throw new Error("Module not found");
       const workflow = MODULE_WORKFLOWS[moduleId] || MODULE_WORKFLOWS.reporting;
       const org = mine?.organization || {};
       const permissions = settings.modulePermissions?.[moduleId] || [];
       const moduleCode = (moduleDef.title || "M").slice(0, 2).toUpperCase();
 
-      document.title = `${moduleDef.title} • MAPPHEX`;
+      document.title = `${moduleDef.title} • Byewave`;
       $("#module-title").textContent = moduleDef.title;
       $("#module-subtitle").textContent = `${org.organizationId || session.tenantId} • workspace portal`;
       $("#module-heading").textContent = moduleDef.title;
@@ -184,12 +208,16 @@
       $("#module-kpi-modules").textContent = installed.size;
       $("#module-kpi-tenant").textContent = session.tenantId;
       $("#hub-link").href = `organization-workspace.html?tenant=${encodeURIComponent(session.tenantId)}`;
-      $("#settings-link").href = `organization-admin.html?tenant=${encodeURIComponent(session.tenantId)}`;
       $("#module-workflow-title").textContent = workflow.title;
       $("#module-workflow-subtitle").textContent = moduleDef.description;
       $("#module-permissions").textContent = permissions.length ? permissions.map(escapeHtml).join(", ") : "Uses inherited organization permissions.";
+      if ($("#module-activity-note") && moduleDef.componentRole) {
+        $("#module-activity-note").textContent = moduleDef.componentRole;
+      }
 
-      renderNav(admin.portalCatalog || PORTAL_CATALOG, installed, moduleId, session.tenantId);
+      await hydrateSharedData();
+
+      renderNav((admin.portalCatalog || PORTAL_CATALOG).map(enrichPortal), installed, moduleId, session.tenantId);
       renderForm(workflow);
       renderRows(moduleId, workflow);
 
@@ -199,7 +227,7 @@
         if (event.key === "Escape") setMenuOpen(false);
       });
       $("#module-search")?.addEventListener("input", (event) => renderRows(moduleId, workflow, event.currentTarget.value));
-      $("#module-record-form")?.addEventListener("submit", (event) => {
+      $("#module-record-form")?.addEventListener("submit", async (event) => {
         event.preventDefault();
         const values = workflow.labels.map((_, idx) => String(new FormData(event.currentTarget).get(`field${idx}`) || "").trim());
         if (values.some((value) => !value)) return;
@@ -210,6 +238,7 @@
         saveModuleData(data);
         appendActivity(moduleId, "record.created", { values });
         renderRows(moduleId, workflow, $("#module-search")?.value || "");
+        await store()?.flush?.().catch(() => null);
       });
 
     } catch (err) {

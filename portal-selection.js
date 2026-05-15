@@ -6,7 +6,7 @@
     String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   const ORGS_KEY = "platform_organizations_v1";
   const SETTINGS_KEY = "enterprise_org_settings_v1";
-  const PORTAL_CATALOG = [
+  const PORTAL_CATALOG = window.EnterpriseModules?.catalog || [
     { id: "branch", title: "Branch Management", href: "organization-module.html", description: "Locations, branch teams, local operations.", features: ["Branch records", "Local teams", "Operational scope"] },
     { id: "departments", title: "Department Management", href: "organization-module.html", description: "Department users, workflows, and approvals.", features: ["Department roles", "Approvals", "Workflows"] },
     { id: "hr", title: "HR Module", href: "organization-module.html", description: "Staff records, HR reports, and workforce structure.", features: ["Shared users", "Workforce reports", "Role access"] },
@@ -21,7 +21,7 @@
     { id: "customer", title: "Customer Module", href: "organization-module.html", description: "Customer operations and service workflows.", features: ["Customers", "Service records", "Support"] },
     { id: "reporting", title: "Reporting Module", href: "organization-module.html", description: "Operational, finance, and organization reports.", features: ["Operational reports", "Financial summaries", "Exports"] },
   ];
-  const VALID_PORTAL_IDS = new Set(PORTAL_CATALOG.map((portal) => portal.id));
+  const VALID_PORTAL_IDS = window.EnterpriseModules?.validIds || new Set(PORTAL_CATALOG.map((portal) => portal.id));
 
   const readJson = (key, fallback) => {
     try {
@@ -35,6 +35,11 @@
   const writeJson = (key, value) => {
     localStorage.setItem(key, JSON.stringify(value ?? null));
   };
+
+  const enrichPortal = (portal) => ({
+    ...(window.EnterpriseModules?.get?.(portal?.id) || {}),
+    ...(portal || {}),
+  });
 
   const fetchJson = async (url, opts) => {
     const res = await fetch(url, opts);
@@ -120,14 +125,14 @@
       mine = { ok: true, organization: localOrg(session.tenantId) };
     }
     if (!admin.ok) throw new Error(admin.error || "Unable to load portals");
-    catalog = admin.portalCatalog || [];
+    catalog = (admin.portalCatalog || []).map(enrichPortal);
     settings = admin.settings || {};
     org = mine?.organization || null;
     if (settings.agreementAccepted !== true) {
       location.href = `organization-agreement.html?tenant=${encodeURIComponent(window.EnterpriseCore?.currentTenantId?.() || "")}`;
       return;
     }
-    $("#portal-org-name").textContent = `MAPPHEX Workspace — ${org?.name || "Organization"}`;
+    $("#portal-org-name").textContent = `Byewave - ${org?.name || "Organization"}`;
     $("#portal-workspace-link").href = `organization-workspace.html?tenant=${encodeURIComponent(window.EnterpriseCore?.currentTenantId?.() || tenant || "")}`;
     render();
   };
@@ -143,7 +148,10 @@
           return `
           <article class="portal-install-card ${isInstalled ? "is-installed" : "is-selectable"} ${isSelected ? "is-selected" : ""}" data-portal-card="${escapeHtml(portal.id)}">
             <div class="portal-card-top">
-              <h3>${escapeHtml(portal.title)}</h3>
+              <div>
+                <span class="module-category">${escapeHtml(portal.category || "Module")}</span>
+                <h3>${escapeHtml(portal.title)}</h3>
+              </div>
               ${
                 isInstalled
                   ? `<span class="portal-status">Installed</span>`
@@ -154,9 +162,15 @@
               }
             </div>
             <p>${escapeHtml(portal.description)}</p>
+            ${portal.componentRole ? `<p class="module-role">${escapeHtml(portal.componentRole)}</p>` : ""}
             <ul class="portal-feature-list">
               ${(portal.features || []).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}
             </ul>
+            ${
+              portal.sharedResources?.length
+                ? `<div class="module-connectors">${portal.sharedResources.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>`
+                : ""
+            }
             ${isInstalled ? "" : `<span class="portal-status">${isSelected ? "Selected for unified install" : "Ready to install"}</span>`}
             <div class="portal-card-actions">
               ${
@@ -187,7 +201,7 @@
     if (countEl) countEl.textContent = `${count} selected`;
     if (summaryEl) {
       summaryEl.textContent = count
-        ? `${names.join(", ")}${count > names.length ? ` and ${count - names.length} more` : ""} will install as one MAPPHEX Workspace App.`
+        ? `${names.join(", ")}${count > names.length ? ` and ${count - names.length} more` : ""} will install as one Byewave app.`
         : available.length
           ? "Pick the modules your organization needs."
           : "All available portals are already installed.";
@@ -242,10 +256,10 @@
   const normalizePageCopy = () => {
     const subtitle = $(".portal-manager-subtitle");
     const helpText = $("#pwa-install-help-text");
-    if (subtitle) subtitle.textContent = "Select multiple modules and install them together as one MAPPHEX Workspace App.";
+    if (subtitle) subtitle.textContent = "Select multiple modules and install them together as one Byewave app.";
     if (helpText) {
       helpText.textContent =
-        "After modules are enabled, your browser may ask to install MAPPHEX Workspace App. If no prompt appears, the workspace will still open and you can install from your browser menu.";
+        "After modules are enabled, your browser may ask to install Byewave. If no prompt appears, the workspace will still open and you can install from your browser menu.";
     }
   };
 
@@ -257,14 +271,14 @@
     if (/Android/i.test(ua)) {
       return "Modules are installed. If no install prompt appears, tap the browser menu, then Install app or Add to Home screen. Opening your workspace now.";
     }
-    return "Modules are installed. If no install prompt appears, use Chrome or Edge menu, then Install MAPPHEX Workspace App. Opening your workspace now.";
+    return "Modules are installed. If no install prompt appears, use Chrome or Edge menu, then Install Byewave. Opening your workspace now.";
   };
 
   const install = async (portalIds, options = {}) => {
     const ids = Array.from(new Set((Array.isArray(portalIds) ? portalIds : [portalIds]).filter(Boolean)));
     if (!ids.length) return;
     const progress = $("#portal-progress");
-    if (progress) progress.textContent = `Installing ${ids.length} module${ids.length === 1 ? "" : "s"} as one MAPPHEX Workspace App...`;
+    if (progress) progress.textContent = `Installing ${ids.length} module${ids.length === 1 ? "" : "s"} as one Byewave app...`;
     let data;
     try {
       const response = await fetchJson("/api/org-admin", {
@@ -280,7 +294,7 @@
       const installedPortals = Array.from(new Set([...(settings.installedPortals || []), ...ids]));
       const modulePermissions = { ...(settings.modulePermissions || {}) };
       ids.forEach((portalId) => {
-        modulePermissions[portalId] = Array.from(new Set([`${portalId}.read`, `${portalId}.manage`, "organization.shared.read"]));
+        modulePermissions[portalId] = Array.from(new Set(window.EnterpriseModules?.permissionsFor?.(portalId) || [`${portalId}.read`, `${portalId}.manage`, "organization.shared.read"]));
       });
       settings = {
         ...settings,
@@ -297,12 +311,12 @@
     settings = data.settings;
     selected.clear();
     render();
-    window.EnterpriseCore?.notify?.("Workspace app installed", `${ids.length} module${ids.length === 1 ? "" : "s"} enabled`);
+    window.EnterpriseCore?.notify?.("Byewave installed", `${ids.length} module${ids.length === 1 ? "" : "s"} enabled`);
     if (options.installPwa) {
       if (progress) progress.textContent = "Modules enabled. Installing the unified workspace app...";
       const pwaResult = await promptWorkspacePwa();
       if (pwaResult?.ok) {
-        if (progress) progress.textContent = "MAPPHEX Workspace App installed. Opening workspace...";
+        if (progress) progress.textContent = "Byewave installed. Opening workspace...";
         setTimeout(openWorkspace, 900);
         return;
       }
@@ -366,7 +380,7 @@
       if (progress) progress.textContent = "Trying the device app install prompt...";
       const result = await promptWorkspacePwa();
       if (result?.ok) {
-        if (progress) progress.textContent = "MAPPHEX Workspace App installed. Opening workspace...";
+        if (progress) progress.textContent = "Byewave installed. Opening workspace...";
         setTimeout(openWorkspace, 900);
       } else {
         const message = manualInstallMessage();
@@ -378,7 +392,7 @@
     window.MapphexPWA?.onStatus?.((status) => {
       const help = $("#pwa-install-help");
       if (status.promptReady && help?.hidden === false) {
-        $("#pwa-install-help-text").textContent = "The app install prompt is ready. Click Try install prompt again to install MAPPHEX Workspace App on this device.";
+        $("#pwa-install-help-text").textContent = "The app install prompt is ready. Click Try install prompt again to install Byewave on this device.";
       }
     });
     load().catch((err) => window.EnterpriseCore?.notify?.("Portal manager", err.message, "error"));
