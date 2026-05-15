@@ -49,6 +49,7 @@
   };
 
   let portals = [];
+  let availablePortals = [];
 
   const portalUrl = (portal, org) => {
     if (portal?.externalUrl || portal?.external) return portal.externalUrl || portal.href;
@@ -88,32 +89,45 @@
     return summaries[portal.id] || "Workspace module ready";
   };
 
-  const renderPortals = (query = "", org = null) => {
-    const target = $("#installed-portals");
-    const empty = $("#portal-empty");
-    const q = query.trim().toLowerCase();
-    const rows = q
-      ? portals.filter((portal) => `${portal.title} ${portal.description} ${(portal.features || []).join(" ")}`.toLowerCase().includes(q))
-      : portals;
+  const renderPortalList = ({ targetId, emptyId, rows, org, installed }) => {
+    const target = $(targetId);
+    const empty = $(emptyId);
+    if (!target || !empty) return;
     empty.hidden = rows.length > 0;
     target.innerHTML = rows
       .map(
         (portal) => `
-          <article class="portal-hub-card">
+          <article class="portal-hub-card ${installed ? "" : "portal-hub-card-muted"}">
             <div class="portal-hub-card-top">
               <span class="portal-hub-icon">${escapeHtml((portal.title || "M").slice(0, 2).toUpperCase())}</span>
-              <span class="portal-status">Installed</span>
+              <span class="portal-status">${installed ? "Installed in app" : "Not installed"}</span>
             </div>
             <h3>${escapeHtml(portal.title)}</h3>
             <p>${escapeHtml(portal.description)}</p>
-            <div class="portal-hub-summary">${escapeHtml(portal.summary)}</div>
+            <div class="portal-hub-summary">${escapeHtml(installed ? portal.summary : "Available to add to this unified app later")}</div>
             <ul class="portal-feature-list">
               ${(portal.features || []).slice(0, 3).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}
             </ul>
-            <a class="btn primary" href="${escapeHtml(portalUrl(portal, org))}" ${portal.external ? 'target="_blank" rel="noopener noreferrer"' : ""}>Open Portal</a>
+            ${
+              installed
+                ? `<a class="btn primary" href="${escapeHtml(portalUrl(portal, org))}" ${portal.external ? 'target="_blank" rel="noopener noreferrer"' : ""}>Open Portal</a>`
+                : `<a class="btn" href="${escapeHtml($("#manage-portals-link")?.href || "portal-selection.html")}">Add to app</a>`
+            }
           </article>`,
       )
       .join("");
+  };
+
+  const renderPortals = (query = "", org = null) => {
+    const q = query.trim().toLowerCase();
+    const installedRows = q
+      ? portals.filter((portal) => `${portal.title} ${portal.description} ${(portal.features || []).join(" ")}`.toLowerCase().includes(q))
+      : portals;
+    const availableRows = q
+      ? availablePortals.filter((portal) => `${portal.title} ${portal.description} ${(portal.features || []).join(" ")}`.toLowerCase().includes(q))
+      : availablePortals;
+    renderPortalList({ targetId: "#installed-portals", emptyId: "#portal-empty", rows: installedRows, org, installed: true });
+    renderPortalList({ targetId: "#available-portals", emptyId: "#available-empty", rows: availableRows, org, installed: false });
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -159,12 +173,13 @@
       portals = (admin.portalCatalog || [])
         .filter((portal) => installed.has(portal.id))
         .map((portal) => ({ ...portal, summary: portalSummary(portal, settings) }));
+      availablePortals = (admin.portalCatalog || []).filter((portal) => !installed.has(portal.id));
 
       const orgName = org?.name || "Organization";
-      $("#workspace-title").textContent = `MAPPHEX Portal Hub`;
+      $("#workspace-title").textContent = `ByteWave Workspace`;
       $("#workspace-subtitle").textContent = `${org?.organizationId || tenantId} • ${org?.businessType || settings.businessType || "company"}`;
-      $("#portal-hub-heading").textContent = `MAPPHEX Portal Hub - ${orgName}`;
-      $("#portal-hub-summary").textContent = `Central access point for ${orgName}'s installed modules, organization data, and secure workflows.`;
+      $("#portal-hub-heading").textContent = `ByteWave Workspace - ${orgName}`;
+      $("#portal-hub-summary").textContent = `One installed PWA app for ${orgName}'s selected modules, organization data, and secure workflows.`;
       $("#profile-name").textContent = org?.admin?.name || session.email || "Organization Admin";
       $("#profile-email").textContent = session.email || org?.admin?.email || "Signed in securely";
       $("#subscription-status").textContent = org?.subscriptionStatus ? `Subscription: ${org.subscriptionStatus}` : "Subscription: active";
@@ -174,6 +189,7 @@
       $("#hub-kpi-departments").textContent = settings.departments?.length || 0;
       $("#hub-kpi-session").textContent = `${tenantId} isolated`;
       $("#manage-portals-link").href = `portal-selection.html?tenant=${encodeURIComponent(tenantId)}`;
+      $("#available-portals-link").href = `portal-selection.html?tenant=${encodeURIComponent(tenantId)}`;
       $("#admin-link").href = `organization-admin.html?tenant=${encodeURIComponent(tenantId)}`;
 
       renderPortals("", org);

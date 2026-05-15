@@ -1,4 +1,4 @@
-const CACHE_NAME = "enterprise-erp-v11";
+const CACHE_NAME = "enterprise-erp-v12";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -41,6 +41,9 @@ const APP_SHELL = [
   "./images/enterprise-logo.png",
   "./images/enterprise-icon-192.png",
   "./images/enterprise-icon-512.png",
+  "./images/bytewave-logo.jpg",
+  "./images/bytewave-icon-192.png",
+  "./images/bytewave-icon-512.png",
   "./manifest.webmanifest"
 ];
 

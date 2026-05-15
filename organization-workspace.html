@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MAPPHEX Portal Hub</title>
     <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="icon" href="images/enterprise-icon-192.png" type="image/png" />
-    <link rel="apple-touch-icon" href="images/enterprise-icon-192.png" />
+    <link rel="icon" href="images/bytewave-icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="images/bytewave-icon-192.png" />
     <meta name="theme-color" content="#06101f" />
     <link rel="stylesheet" href="director.css" />
     <link rel="stylesheet" href="management.css" />
@@ -15,9 +15,9 @@
   <body data-page="organization-workspace" class="portal-hub-page">
     <header class="topbar portal-hub-topbar">
       <div class="brand">
-        <img id="organization-logo" class="logo-img" src="images/enterprise-logo.png" alt="" />
+        <img id="organization-logo" class="logo-img" src="images/bytewave-logo.jpg" alt="" />
         <div>
-          <div id="workspace-title" class="brand-title">MAPPHEX Portal Hub</div>
+          <div id="workspace-title" class="brand-title">ByteWave Workspace</div>
           <div id="workspace-subtitle" class="brand-subtitle muted">Centralized organization workspace</div>
         </div>
       </div>
@@ -35,7 +35,7 @@
       <section class="portal-hub-hero panel">
         <div>
           <div class="eyebrow">Organization Portal Hub</div>
-          <h1 id="portal-hub-heading">MAPPHEX Workspace</h1>
+          <h1 id="portal-hub-heading">ByteWave Workspace</h1>
           <p id="portal-hub-summary" class="muted">Installed modules, quick access, notifications, and organization controls.</p>
         </div>
         <div class="portal-hub-profile">
@@ -64,11 +64,25 @@
         <div id="installed-portals" class="portal-hub-grid"></div>
         <div id="portal-empty" class="empty-state" hidden>No installed portals match your search.</div>
       </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Available Portals</h2>
+            <p class="portal-manager-subtitle">These portals were not selected during setup. They stay visible and can be added later.</p>
+          </div>
+          <div class="panel-actions">
+            <a id="available-portals-link" class="btn" href="portal-selection.html">Install more portals</a>
+          </div>
+        </div>
+        <div id="available-portals" class="portal-hub-grid"></div>
+        <div id="available-empty" class="empty-state" hidden>All portals are installed in this workspace app.</div>
+      </section>
     </main>
     <script src="enterprise-core.js"></script>
     <script src="kv-client.js"></script>
     <script src="enterprise-store.js"></script>
     <script src="pwa.js"></script>
-    <script src="organization-workspace.js?v=6"></script>
+    <script src="organization-workspace.js?v=7"></script>
   </body>
 </html>

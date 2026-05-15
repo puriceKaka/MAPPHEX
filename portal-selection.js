@@ -237,7 +237,10 @@
     selected.clear();
     render();
     window.EnterpriseCore?.notify?.("Workspace app installed", `${ids.length} portal${ids.length === 1 ? "" : "s"} enabled`);
-    if (progress) progress.textContent = "Unified installation complete. Open the workspace or select more portals.";
+    if (progress) progress.textContent = "Unified installation complete. Opening the workspace app...";
+    setTimeout(() => {
+      location.href = `organization-workspace.html?tenant=${encodeURIComponent(window.EnterpriseCore?.currentTenantId?.() || "")}`;
+    }, 750);
   };
 
   document.addEventListener("DOMContentLoaded", () => {
