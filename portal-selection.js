@@ -207,7 +207,16 @@
     render();
   };
 
-  const install = async (portalIds) => {
+  const promptWorkspacePwa = async () => {
+    if (!window.MapphexPWA?.promptInstall) return { ok: false, reason: "pwa-unavailable" };
+    return window.MapphexPWA.promptInstall();
+  };
+
+  const openWorkspace = () => {
+    location.href = `organization-workspace.html?tenant=${encodeURIComponent(window.EnterpriseCore?.currentTenantId?.() || "")}`;
+  };
+
+  const install = async (portalIds, options = {}) => {
     const ids = Array.from(new Set((Array.isArray(portalIds) ? portalIds : [portalIds]).filter(Boolean)));
     if (!ids.length) return;
     const progress = $("#portal-progress");
@@ -245,10 +254,17 @@
     selected.clear();
     render();
     window.EnterpriseCore?.notify?.("Workspace app installed", `${ids.length} portal${ids.length === 1 ? "" : "s"} enabled`);
-    if (progress) progress.textContent = "Unified installation complete. Opening the workspace app...";
+    if (options.installPwa) {
+      if (progress) progress.textContent = "Portals enabled. Installing the unified PWA app...";
+      const pwaResult = await promptWorkspacePwa();
+      if (!pwaResult?.ok && progress) {
+        progress.textContent = "Portals installed. If the app prompt did not open, use the browser Install App option.";
+      }
+    }
+    if (progress && !options.installPwa) progress.textContent = "Unified installation complete. Opening the workspace app...";
     setTimeout(() => {
-      location.href = `organization-workspace.html?tenant=${encodeURIComponent(window.EnterpriseCore?.currentTenantId?.() || "")}`;
-    }, 750);
+      openWorkspace();
+    }, options.installPwa ? 1100 : 750);
   };
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -276,15 +292,15 @@
       const btn = event.currentTarget;
       if (!selected.size) return;
       btn.disabled = true;
-      btn.textContent = "Installing selected...";
-      install([...selected])
+      btn.textContent = "Installing portals + PWA...";
+      install([...selected], { installPwa: true })
         .catch((err) => {
           const progress = $("#portal-progress");
           if (progress) progress.textContent = "Installation failed. Try again.";
           window.EnterpriseCore?.notify?.("Install failed", err.message, "error");
         })
         .finally(() => {
-          btn.textContent = "Install selected as one app";
+          btn.textContent = "Install selected as PWA app";
           renderBulkBar();
         });
     });
